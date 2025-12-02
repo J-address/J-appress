@@ -1,5 +1,5 @@
 // eslint.config.js
-import tseslint from 'typescript-eslint';
+import tseslint from '@typescript-eslint/eslint-plugin';
 export default [
     {
         ignores: ["node_modules/", "dist/", "build/"],
