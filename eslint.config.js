@@ -1,19 +1,15 @@
 // eslint.config.js
-import tseslint from '@typescript-eslint/eslint-plugin';
-export default [
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
     {
-        ignores: ["node_modules/", "dist/", "build/"],
-        languageOptions: {
-            parser: tseslint.parser,
-            parserOptions: {
-                ecmaVersion: 'latest',
-                sourceType: 'module',
-            }
-        },
+        ignores: ['node_modules/', 'dist/', 'build/'],
+    },
+    ...tseslint.configs.recommended,
+    {
         rules: {
             'semi': ['error', 'always'],
             'quotes': ['error', 'single'],
-        }
+        },
     },
-    ...tseslint.configs.recommended,
-];
+);
