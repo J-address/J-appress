@@ -15,9 +15,9 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) // Unikátní ID
+  id        String   @id @default(uuid()) // Unique ID
   email     String   @unique              // Email
-  password  String                        // Heslo
-  createdAt DateTime @default(now())      // Datum vytvoření
-  updatedAt DateTime @updatedAt           // Datum změny
+  password  String                        // Password
+  createdAt DateTime @default(now())      // Date of creation
+  updatedAt DateTime @updatedAt           // Date of change
 }
