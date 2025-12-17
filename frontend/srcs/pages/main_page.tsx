@@ -25,6 +25,9 @@ export default function MainPage() {
     'rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition hover:-translate-y-[2px] hover:bg-white/10';
   const [jstTime, setJstTime] = useState('');
   const router = useRouter();
+  const handleCardClick = (href?: string) => {
+    if (href) router.push(href);
+  };
 
   const calendar = useMemo(() => {
     const now = new Date();
@@ -77,7 +80,7 @@ export default function MainPage() {
                 key={card.title}
                 type='button'
                 className={actionCardClass}
-                onClick={card.href ? () => router.push(card.href) : undefined}
+                onClick={() => handleCardClick(card.href)}
               >
                 <p className='text-xs uppercase tracking-widest text-white/60'>{card.title}</p>
               </button>
