@@ -1,21 +1,33 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-const cards = [
-  { title: 'Profile'},
-  { title: 'Inbox'},
-  { title: 'Shimpent request'},
-  { title: 'Settings'},
-  { title: 'Price list'},
-  { title: 'FAQ'},
-  { title: 'Contact us'},
+type Card = { title: string; href?: string };
+
+const gradientStyle = {
+  backgroundImage:
+    'linear-gradient(135deg, #114CEE 0%, #0F399F 30%, #000000 55%, #F78D00 80%)',
+};
+
+const cards: Card[] = [
+  { title: 'Profile' },
+  { title: '郵便物', href: '/inbox' },
+  { title: 'Shipment request' },
+  { title: 'Settings' },
+  { title: 'Price list' },
+  { title: 'FAQ' },
+  { title: 'Contact us', href: '/contact' },
 ];
 
 export default function MainPage() {
   const actionCardClass =
     'rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition hover:-translate-y-[2px] hover:bg-white/10';
   const [jstTime, setJstTime] = useState('');
+  const router = useRouter();
+  const handleCardClick = (href?: string) => {
+    if (href) router.push(href);
+  };
 
   const calendar = useMemo(() => {
     const now = new Date();
@@ -51,7 +63,7 @@ export default function MainPage() {
   }, []);
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#114CEE] via-[#0F399F] to-[#F78D00]'>
+    <div className='min-h-screen' style={gradientStyle}>
       <div className='mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-6 py-10 text-white'>
         <header className='flex flex-col gap-4 rounded-3xl bg-white/10 p-8 shadow-xl backdrop-blur'>
           <div className='flex flex-wrap items-start justify-between gap-4'>
@@ -68,6 +80,7 @@ export default function MainPage() {
                 key={card.title}
                 type='button'
                 className={actionCardClass}
+                onClick={() => handleCardClick(card.href)}
               >
                 <p className='text-xs uppercase tracking-widest text-white/60'>{card.title}</p>
               </button>

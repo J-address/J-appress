@@ -15,9 +15,35 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) // Unique ID
+  id        String   @id @default(uuid())
   email     String   @unique              // Email
   password  String                        // Password
   createdAt DateTime @default(now())      // Date of creation
   updatedAt DateTime @updatedAt           // Date of change
+  inbox  Inbox[]
+}
+enum InboxStatus {
+  RECEIVED
+  ACTION_REQUESTED
+  COMPLETED
+}
+
+enum ActionType {
+  NONE      // そのまま
+  SEND      // 転送
+  SCAN      // スキャン
+  DISCARD   // 廃棄
+}
+
+model Inbox {
+  id              Int           @id @default(autoincrement())
+  imageUrl        String?       // URL link to the actual photo
+  
+  status          InboxStatus @default(RECEIVED)
+  requestedAction ActionType    @default(NONE)
+
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

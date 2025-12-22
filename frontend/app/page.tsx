@@ -1,4 +1,4 @@
-import MainPage from '@/srcs/dashboard/main_page';
+import MainPage from '@/srcs/pages/main_page';
 
 export default function Home() {
   return <MainPage />;
