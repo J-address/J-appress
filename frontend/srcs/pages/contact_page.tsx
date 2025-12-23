@@ -12,7 +12,7 @@ export default function ContactPage() {
             <p className='text-xs uppercase tracking-[0.3em] text-white/70'>Support</p>
             <h1 className='text-3xl font-bold sm:text-4xl'>Contact us</h1>
             <p className='mt-2 max-w-3xl text-base text-white/80'>
-              Do not hesitate to write us. We respond as quickly as possible—typically within 3 days.
+              Do not hesitate to write us. We respond as quickly as possible—typically within 35 days.
             </p>
           </div>
         </header>
