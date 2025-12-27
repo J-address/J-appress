@@ -1,0 +1,242 @@
+Step 5: Implement Auth Service
+Update apps/api/src/auth/auth.service.ts:
+
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
+
+  async register(dto: RegisterDto) {
+    // Check if user exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    // Create user
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+      },
+    });
+
+    // Generate token
+    const token = this.generateToken(user.id, user.email);
+
+    return {
+      accessToken: token,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    };
+  }
+
+  async login(dto: LoginDto) {
+    // Find user
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Generate token
+    const token = this.generateToken(user.id, user.email);
+
+    return {
+      accessToken: token,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    };
+  }
+
+  private generateToken(userId: string, email: string): string {
+    const payload = { sub: userId, email };
+    return this.jwtService.sign(payload);
+  }
+}
+Step 6: Create JWT Strategy
+Create src/auth/strategies/jwt.strategy.ts:
+
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PrismaService } from '../../prisma/prisma.service';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(private prisma: PrismaService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+    });
+  }
+
+  async validate(payload: any) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    return { userId: user.id, email: user.email };
+  }
+}
+Step 7: Create Auth Guard
+Create src/auth/guards/jwt-auth.guard.ts:
+
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
+Step 8: Create CurrentUser Decorator
+Create src/auth/decorators/current-user.decorator.ts:
+
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const CurrentUser = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user;
+  },
+);
+Step 9: Update Auth Controller
+Update apps/api/src/auth/auth.controller.ts:
+
+import { Body, Controller, Post, Get, UseGuards } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
+  }
+
+  @Post('login')
+  async login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@CurrentUser() user: any) {
+    return user;
+  }
+}
+Step 10: Update Auth Module
+Update apps/api/src/auth/auth.module.ts:
+
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
+
+@Module({
+  imports: [
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+      signOptions: { expiresIn: '7d' },
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+})
+export class AuthModule {}
+Step 11: Update App Module
+Update apps/api/src/app.module.ts:
+
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+
+@Module({
+  imports: [PrismaModule, AuthModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+Step 12: Add Validation Pipe
+Update apps/api/src/main.ts:
+
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  );
+  
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+Step 13: Add class-validator
+
+npm install class-validator class-transformer
+Step 14: Add JWT_SECRET to .env
+Create/update apps/api/.env:
+
+DATABASE_URL="postgresql://..."
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+Step 15: Test the API
+Start your server:
+
+npm run start:dev
+Test with curl or Postman: Register:
+
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+Login:
+
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+Get Profile (protected):
+
+curl -X GET http://localhost:3000/auth/profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+Let me know when you're ready to move forward or if you hit any issues!
