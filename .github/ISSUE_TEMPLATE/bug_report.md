@@ -34,7 +34,7 @@ What is happening now?
 
 **How should it work?**  
 
-- Expected code  / result (if any):
+- Expected code / result (if any):
 - Expected screenshot (if any):
 
 **Suggestion to change (optional)**  
