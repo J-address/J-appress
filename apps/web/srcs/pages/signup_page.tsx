@@ -61,14 +61,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             アカウント作成
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-center text-sm text-gray-600">
             J-address郵便物転送サービスに登録
           </p>
         </div>
@@ -77,8 +77,8 @@ export default function SignupPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {/* Error Message */}
           {error && (
-            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-              <p className="text-sm text-red-800 dark:text-red-200">
+            <div className="rounded-md bg-red-50 p-4">
+              <p className="text-sm text-red-800">
                 {error}
               </p>
             </div>
@@ -97,7 +97,7 @@ export default function SignupPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="メールアドレス"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -115,7 +115,7 @@ export default function SignupPage() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="パスワード（8文字以上）"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -133,7 +133,7 @@ export default function SignupPage() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="パスワード確認"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -156,7 +156,7 @@ export default function SignupPage() {
           <div className="text-sm text-center">
             <a
               href="/login"
-              className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               既にアカウントをお持ちの方はログイン
             </a>
