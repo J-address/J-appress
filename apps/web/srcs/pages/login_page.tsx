@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Role } from "@j-address/shared";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function LoginPage() {
         localStorage.setItem("access_token", data.access_token);
 
         // Redirect based on user role
-        if (data.user?.role === "ADMIN") {
+        if (data.user?.role === Role.ADMIN) {
           router.replace("/admin");
         } else {
           router.replace("/");
