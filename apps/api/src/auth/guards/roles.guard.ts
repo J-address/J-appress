@@ -5,7 +5,9 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Request } from 'express';
 import { Role } from '../../../generated/prisma';
+import type { AuthUser } from '../types/auth.types';
 
 /**
  * Guard that checks if the authenticated user has the required role(s)
@@ -36,11 +38,13 @@ export class RolesGuard implements CanActivate {
     }
 
     // Get the request object which contains the authenticated user
-    const request = context.switchToHttp().getRequest();
+    // Type it as Express Request with optional user property
+    const request = context.switchToHttp().getRequest<Request & { user?: AuthUser }>();
     const user = request.user; // User info attached by JwtAuthGuard
 
     // Check if user exists and has one of the required roles
-    if (!user || !requiredRoles.includes(user.role)) {
+    // Using optional chaining for safe access
+    if (!user || !user.role || !requiredRoles.includes(user.role)) {
       throw new ForbiddenException(
         'You do not have permission to access this resource',
       );
