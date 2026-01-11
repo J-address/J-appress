@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { Role } from '../../generated/prisma';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -68,7 +69,7 @@ export class AuthService {
     };
   }
 
-  private generateToken(userId: string, email: string, role: string): string {
+  private generateToken(userId: string, email: string, role: Role): string {
     const payload = { sub: userId, email, role };
     return this.jwtService.sign(payload);
   }
