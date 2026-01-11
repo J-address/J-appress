@@ -27,10 +27,11 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     // Read the 'roles' metadata from the @Roles() decorator
+    // Checks both method and class level - method level takes precedence
     // Example: @Roles(Role.ADMIN) → requiredRoles = [Role.ADMIN]
-    const requiredRoles = this.reflector.get<Role[]>(
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
       'roles', // The metadata key we set in the decorator
-      context.getHandler(), // The method being called (e.g., getAllUsers)
+      [context.getHandler(), context.getClass()], // Check method, then controller
     );
 
     if (!requiredRoles) {

@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "npm run dev:docker && concurrently \"npm run dev:web\" \"npm run dev:api\"",
-    "dev:docker": "docker info > /dev/null 2>&1 || { echo \"[dev] Docker daemon is not running or not reachable. Please start Docker and ensure docker-compose.yml exists before running 'npm run dev'.\"; exit 1; }; docker compose up -d",
+    "dev:docker": "node -e \"const { spawnSync } = require('child_process'); const result = spawnSync('docker', ['info'], { stdio: 'ignore' }); if (result.status !== 0) { console.error('[dev] Docker daemon is not running or not reachable. Please start Docker and ensure docker-compose.yml exists before running \\'npm run dev\\'.'); process.exit(1); }\" && docker compose up -d",
     "dev:web": "npm run dev --workspace=apps/web",
     "dev:api": "npm run dev --workspace=apps/api",
     "build": "npm run build --workspaces",
