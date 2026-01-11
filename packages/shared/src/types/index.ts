@@ -1,5 +1,10 @@
 // Shared types for J-address application
 
+export enum Role {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}
+
 export enum InboxStatus {
   RECEIVED = "RECEIVED",
   ACTION_REQUESTED = "ACTION_REQUESTED",
@@ -16,6 +21,7 @@ export enum ActionType {
 export interface User {
   id: string;
   email: string;
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 }
