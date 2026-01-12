@@ -39,23 +39,4 @@ export class AdminController {
     };
   }
 
-  /**
-   * GET /admin/users
-   * Returns list of all users
-   *
-   * Access: ADMIN only
-   */
-  @Get('users')
-  @Roles(Role.ADMIN)
-  getAllUsers(@CurrentUser() user: AuthUser) {
-    return {
-      message: 'Admin-only endpoint: List of all users',
-      requestedBy: {
-        id: user.userId,
-        email: user.email,
-        role: user.role,
-      },
-      users: [], // TODO: Implement actual user list from database
-    };
-  }
 }
