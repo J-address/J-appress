@@ -1,8 +1,11 @@
 "use client"; // Marks this file as a Client Component so it can use hooks and browser APIs
 
 import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { Role } from "@j-address/shared";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,8 +39,13 @@ export default function LoginPage() {
       // Store the token
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        // Redirect to home page
-        window.location.href = "/";
+
+        // Redirect based on user role
+        if (data.user?.role === Role.ADMIN) {
+          router.replace("/admin");
+        } else {
+          router.replace("/");
+        }
       }
     } catch (err) {
       setError(
