@@ -1,5 +1,5 @@
-import MainPage from '@/srcs/pages/main_page';
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <MainPage />;
+  redirect("/inbox");
 }

@@ -45,8 +45,8 @@ export default function SignupPage() {
       // Store the token if provided
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        // Redirect to home page
-        window.location.href = "/";
+        // Redirect to inbox page
+        window.location.href = "/inbox";
       } else {
         // if no token, redirect to login page
         window.location.href = "/login";
