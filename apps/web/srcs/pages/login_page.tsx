@@ -3,52 +3,41 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@j-address/shared";
-import { ActionButton } from "@/srcs/components/inbox_page_components";
+type DecorativeBirdProps = {
+  svgClassName: string;
+};
+
+function DecorativeBird({ svgClassName }: DecorativeBirdProps) {
+  return (
+    <div className="pointer-events-none flex h-10 w-10 items-center justify-center rounded-full bg-white/1 text-black">
+      <svg viewBox="0 0 256 128" className={svgClassName} aria-hidden="true">
+        <path
+          d="M10 86 C46 22 102 14 128 56 C156 60 206 18 246 86"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="20"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
 
 const gradientStyle = {
   backgroundImage:
     "linear-gradient(180deg, #d8daddff 3%, #c0dfffff 16%, #6aa2f0ff 36%, #0155c3ff 90%)",
 };
 
-const actionButtons = [
-  {
-    actionKey: "forward",
-    label: "",
-    ariaLabel: "転送を選択",
-    svgClassName: "h-20 w-14",
-    labelSizeClassName: "sr-only",
-  },
-  {
-    actionKey: "scan",
-    label: "",
-    ariaLabel: "スキャンを選択",
-    svgClassName: "h-10 w-14",
-    labelSizeClassName: "sr-only",
-  },
-  {
-    actionKey: "discard",
-    label: "",
-    ariaLabel: "破棄を選択",
-    svgClassName: "h-10 w-14",
-    labelSizeClassName: "sr-only",
-  },
+const birds = [
+  { id: "bird-1", svgClassName: "h-20 w-14" },
+  { id: "bird-2", svgClassName: "h-10 w-14" },
+  { id: "bird-3", svgClassName: "h-10 w-14" },
 ] as const;
 
-const extraButtons = [
-  {
-    actionKey: "scan",
-    label: "",
-    ariaLabel: "装飾用アイコン",
-    svgClassName: "h-10 w-14",
-    labelSizeClassName: "sr-only",
-  },
-  {
-    actionKey: "discard",
-    label: "",
-    ariaLabel: "装飾用アイコン",
-    svgClassName: "h-10 w-14",
-    labelSizeClassName: "sr-only",
-  },
+const extraBirds = [
+  { id: "bird-4", svgClassName: "h-10 w-14" },
+  { id: "bird-5", svgClassName: "h-10 w-14" },
 ] as const;
 
 export default function LoginPage() {
@@ -123,7 +112,7 @@ export default function LoginPage() {
       </div>
       <div className="absolute top-0 left-[65%] z-10 flex -translate-x-1/2 pt-6 sm:pt-8">
         <div className="relative flex flex-col items-center gap-0.5 sm:gap-1">
-          {actionButtons.map((action, index) => {
+          {birds.map((bird, index) => {
             const offsetClass =
               index === 0
                 ? "translate-x-26 translate-y-9"
@@ -131,7 +120,7 @@ export default function LoginPage() {
                   ? "translate-x-16"
                   : "";
             return (
-              <div key={`${action.actionKey}-${index}`} className={offsetClass}>
+              <div key={bird.id} className={offsetClass}>
                 <div
                   className={
                     index === 1
@@ -141,36 +130,20 @@ export default function LoginPage() {
                         : ""
                   }
                 >
-                  <ActionButton
-                    actionKey={action.actionKey}
-                    label={action.label}
-                    ariaLabel={action.ariaLabel}
-                    svgClassName={action.svgClassName}
-                    labelSizeClassName={action.labelSizeClassName}
-                    isActive={false}
-                    onClick={() => {}}
-                  />
+                  <DecorativeBird svgClassName={bird.svgClassName} />
                 </div>
               </div>
             );
           })}
-          {extraButtons.map((action, index) => {
+          {extraBirds.map((bird, index) => {
             const extraClass =
               index === 0
                 ? "absolute left-full top-0 translate-x-50"
                 : "absolute left-full top-16 translate-x-25";
             return (
-              <div key={`extra-${index}`} className={extraClass}>
+              <div key={bird.id} className={extraClass}>
                 <div className={index === 0 ? "scale-55" : ""}>
-                  <ActionButton
-                    actionKey={action.actionKey}
-                    label={action.label}
-                    ariaLabel={action.ariaLabel}
-                    svgClassName={action.svgClassName}
-                    labelSizeClassName={action.labelSizeClassName}
-                    isActive={false}
-                    onClick={() => {}}
-                  />
+                  <DecorativeBird svgClassName={bird.svgClassName} />
                 </div>
               </div>
             );
