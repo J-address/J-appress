@@ -68,7 +68,7 @@ describe('AuthService', () => {
     };
 
     it('should create a new user and return access token', async () => {
-      // rmockResolvedValue means the mock will return this value when called
+      // mockResolvedValue means the mock will return this value when called
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       mockPrismaService.user.create.mockResolvedValue(mockUser);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
