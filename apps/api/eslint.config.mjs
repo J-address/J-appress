@@ -36,7 +36,7 @@ export default tseslint.config(
   {
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
-      //   The unbound-method rule warns when you pass methods separately from their objects:
+      // The unbound-method rule warns when you pass methods separately from their objects:
       '@typescript-eslint/unbound-method': 'off',
     },
   },
