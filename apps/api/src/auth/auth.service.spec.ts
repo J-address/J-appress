@@ -134,7 +134,6 @@ describe('AuthService', () => {
     it('should login user and return access token', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      // return immediately without async
       mockJwtService.sign.mockReturnValue('jwt-token');
 
       const result = await service.login(loginDto);
