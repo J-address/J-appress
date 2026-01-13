@@ -12,15 +12,15 @@ describe('JwtStrategy', () => {
     user: {
       findUnique: jest.fn(),
     },
-  };
+  } as unknown as PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JwtStrategy,
         {
-          provide: PrismaService,
-          useValue: mockPrismaService,
+          provide: PrismaService, // Provide the mock PrismaService
+          useValue: mockPrismaService, // Use the mock PrismaService
         },
       ],
     }).compile();
@@ -54,7 +54,7 @@ describe('JwtStrategy', () => {
     };
 
     it('should return user data when user exists', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await strategy.validate(mockPayload);
 
@@ -69,7 +69,7 @@ describe('JwtStrategy', () => {
     });
 
     it('should throw UnauthorizedException when user does not exist', async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(strategy.validate(mockPayload)).rejects.toThrow(
         UnauthorizedException,
@@ -95,7 +95,7 @@ describe('JwtStrategy', () => {
         updatedAt: new Date(),
       };
 
-      mockPrismaService.user.findUnique.mockResolvedValue(adminUser);
+      (prismaService.user.findUnique as jest.Mock).mockResolvedValue(adminUser);
 
       const result = await strategy.validate(adminPayload);
 

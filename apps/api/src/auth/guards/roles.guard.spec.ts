@@ -17,7 +17,7 @@ describe('RolesGuard', () => {
   });
 
   describe('canActivate', () => {
-    const createMockExecutionContext = (user?: any): ExecutionContext => {
+    const createMockExecutionContext = (user?: unknown): ExecutionContext => {
       return {
         getHandler: jest.fn(),
         getClass: jest.fn(),
@@ -26,7 +26,7 @@ describe('RolesGuard', () => {
             user,
           }),
         }),
-      } as any;
+      } as unknown as ExecutionContext;
     };
 
     it('should return true if no roles are required', () => {
