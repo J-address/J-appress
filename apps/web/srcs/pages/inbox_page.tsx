@@ -127,6 +127,7 @@ export default function InboxPage() {
           photos={packagesGallery}
           gridClassName='grid gap-4 sm:grid-cols-3 lg:grid-cols-4'
           pairWithNextOnSelect
+          stackPairs
           selectionMode={selectionMode}
           onSelectionModeChange={setSelectionMode}
           selected={selectedIds}

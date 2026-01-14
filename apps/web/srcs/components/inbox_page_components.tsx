@@ -30,6 +30,7 @@ type GallerySectionProps = {
   onSelectedChange: (value: Set<string>) => void;
   selectedHighlightClass: string;
   pairWithNextOnSelect?: boolean;
+  stackPairs?: boolean;
 };
 
 const labelShadowClassName = 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]';
@@ -44,18 +45,22 @@ export function GallerySection({
   onSelectedChange,
   selectedHighlightClass,
   pairWithNextOnSelect,
+  stackPairs,
 }: GallerySectionProps) {
+  const photoCount = stackPairs ? Math.ceil(photos.length / 2) : photos.length;
+
   return (
     <div className='mx-auto w-full max-w-5xl'>
       <div className='mb-2 flex items-end justify-between gap-4'>
         <h2 className='text-2xl font-semibold text-white'>{title}</h2>
-        <span className='text-sm font-semibold text-white/80'>写真数: {photos.length}</span>
+        <span className='text-sm font-semibold text-white/80'>写真数: {photoCount}</span>
       </div>
       <PhotoGallery
         title={title}
         photos={photos}
         gridClassName={gridClassName}
         pairWithNextOnSelect={pairWithNextOnSelect}
+        stackPairs={stackPairs}
         selectionMode={selectionMode}
         onSelectionModeChange={onSelectionModeChange}
         selected={selected}

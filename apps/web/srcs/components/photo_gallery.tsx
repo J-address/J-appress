@@ -5,6 +5,23 @@ import { createPortal } from 'react-dom';
 
 type Photo = { id: string; src: string; alt: string };
 
+type PhotoIndexBadgeProps = {
+  value: number;
+  className?: string;
+};
+
+function PhotoIndexBadge({ value, className }: PhotoIndexBadgeProps) {
+  return (
+    <span
+      className={`absolute z-10 flex h-7 w-7 items-center justify-center rounded-full bg-[#6aa2f0]/45 text-xs font-semibold text-black shadow ${
+        className ?? 'left-1 top-1'
+      }`}
+    >
+      {value}
+    </span>
+  );
+}
+
 type Props = {
   title: string;
   subtitle?: string;
@@ -12,6 +29,7 @@ type Props = {
   photos: Photo[];
   gridClassName?: string;
   pairWithNextOnSelect?: boolean;
+  stackPairs?: boolean;
   selectionMode?: boolean;
   onSelectionModeChange?: (val: boolean) => void;
   selected?: Set<string>;
@@ -27,6 +45,7 @@ export function PhotoGallery({
   photos,
   gridClassName,
   pairWithNextOnSelect,
+  stackPairs,
   selectionMode,
   onSelectionModeChange,
   selected,
@@ -129,6 +148,18 @@ export function PhotoGallery({
 
   const selectedCount = selectedValue.size;
   const currentPhoto = previewIndex !== null ? photos[previewIndex] : null;
+  const currentDisplayNumber =
+    previewIndex !== null
+      ? stackPairs
+        ? Math.floor(previewIndex / 2) + 1
+        : previewIndex + 1
+      : null;
+  const hasPair =
+    stackPairs && previewIndex !== null
+      ? previewIndex % 2 === 0
+        ? Boolean(photos[previewIndex + 1])
+        : Boolean(photos[previewIndex - 1])
+      : false;
 
   const selectAll = () => {
     setSelectedValue((prev) => {
@@ -147,7 +178,14 @@ export function PhotoGallery({
     e.stopPropagation();
     setPreviewIndex((idx) => {
       if (idx === null || photos.length === 0) return idx;
-      return (idx - 1 + photos.length) % photos.length;
+      if (!stackPairs) return (idx - 1 + photos.length) % photos.length;
+      const parity = idx % 2;
+      let next = idx - 2;
+      if (next < 0) {
+        const lastIndex = photos.length - 1;
+        next = lastIndex % 2 === parity ? lastIndex : lastIndex - 1;
+      }
+      return next;
     });
   };
 
@@ -155,7 +193,23 @@ export function PhotoGallery({
     e.stopPropagation();
     setPreviewIndex((idx) => {
       if (idx === null || photos.length === 0) return idx;
-      return (idx + 1) % photos.length;
+      if (!stackPairs) return (idx + 1) % photos.length;
+      const parity = idx % 2;
+      let next = idx + 2;
+      if (next >= photos.length) {
+        next = parity;
+      }
+      return next;
+    });
+  };
+
+  const togglePair = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPreviewIndex((idx) => {
+      if (idx === null) return idx;
+      if (!stackPairs) return idx;
+      const pairIndex = idx % 2 === 0 ? idx + 1 : idx - 1;
+      return photos[pairIndex] ? pairIndex : idx;
     });
   };
 
@@ -196,12 +250,16 @@ export function PhotoGallery({
 
       <div className={gridClassName ?? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'}>
         {photos.map((photo, index) => {
+          if (stackPairs && index % 2 === 1) return null;
+
+          const pairedPhoto = stackPairs ? photos[index + 1] : null;
+          const displayNumber = stackPairs ? Math.floor(index / 2) + 1 : index + 1;
           const isSelected = selectedValue.has(photo.id);
           return (
             <div
               key={photo.id}
-              className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg transition hover:-translate-y-[2px] hover:border-white/30 ${
-                isSelected ? highlightClass : ''
+              className={`group relative aspect-[4/3] ${
+                stackPairs ? 'overflow-visible' : 'overflow-hidden rounded-2xl'
               }`}
               onPointerDown={() => startLongPress(photo)}
               onPointerUp={() => {
@@ -224,12 +282,29 @@ export function PhotoGallery({
               }}
               data-photo-tile='true'
             >
-              <img
-                src={photo.src}
-                alt={photo.alt}
-                className='h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]'
-              />
-              <div className='absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+              {stackPairs && pairedPhoto && (
+                <div className='pointer-events-none absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-white/10 bg-white/5 shadow-lg'>
+                  <img
+                    src={pairedPhoto.src}
+                    alt={pairedPhoto.alt}
+                    className='h-full w-full object-cover opacity-90'
+                  />
+                  <div className='absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+                </div>
+              )}
+              <div
+                className={`relative z-10 h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg transition hover:-translate-y-[2px] hover:border-white/30 ${
+                  isSelected ? highlightClass : ''
+                }`}
+              >
+                <PhotoIndexBadge value={displayNumber} />
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  className='h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]'
+                />
+                <div className='absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+              </div>
             </div>
           );
         })}
@@ -252,13 +327,29 @@ export function PhotoGallery({
                     alt={currentPhoto.alt}
                     className='h-auto max-h-[85vh] w-auto max-w-full object-contain'
                   />
+                  {currentDisplayNumber !== null && (
+                    <PhotoIndexBadge
+                      value={currentDisplayNumber}
+                      className='left-4 top-4'
+                    />
+                  )}
                   <button
                     type='button'
                     className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700'
                     onClick={closePreview}
                   >
-                    閉じる
+                    X
                   </button>
+                  {stackPairs && (
+                    <button
+                      type='button'
+                      className='absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50'
+                      onClick={togglePair}
+                      disabled={!hasPair}
+                    >
+                      ペア切替
+                    </button>
+                  )}
                   <button
                     type='button'
                     className='absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85'
