@@ -32,8 +32,6 @@ type GallerySectionProps = {
   stackPairs?: boolean;
 };
 
-const labelShadowClassName = 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]';
-
 export function GallerySection({
   title,
   photos,

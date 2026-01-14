@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@j-address/shared";
-import DecorativeBirds from "@/srcs/components/decorative_birds";
+import DecorativeBirds from "../components/decorative_birds";
 
 const gradientStyle = {
   backgroundImage:
