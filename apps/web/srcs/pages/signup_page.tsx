@@ -1,43 +1,12 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-
-type DecorativeBirdProps = {
-  svgClassName: string;
-};
-
-function DecorativeBird({ svgClassName }: DecorativeBirdProps) {
-  return (
-    <div className="pointer-events-none flex h-10 w-10 items-center justify-center rounded-full bg-white/1 text-black">
-      <svg viewBox="0 0 256 128" className={svgClassName} aria-hidden="true">
-        <path
-          d="M10 86 C46 22 102 14 128 56 C156 60 206 18 246 86"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="20"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
+import DecorativeBirds from "@/srcs/components/decorative_birds";
 
 const gradientStyle = {
   backgroundImage:
     "linear-gradient(180deg, #d8daddff 3%, #c0dfffff 16%, #6aa2f0ff 36%, #0155c3ff 90%)",
 };
-
-const birds = [
-  { id: "bird-1", svgClassName: "h-20 w-14" },
-  { id: "bird-2", svgClassName: "h-10 w-14" },
-  { id: "bird-3", svgClassName: "h-10 w-14" },
-] as const;
-
-const extraBirds = [
-  { id: "bird-4", svgClassName: "h-10 w-14" },
-  { id: "bird-5", svgClassName: "h-10 w-14" },
-] as const;
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -115,46 +84,7 @@ export default function SignupPage() {
           />
         </svg>
       </div>
-      <div className="absolute top-0 left-[65%] z-10 flex -translate-x-1/2 pt-6 sm:pt-8">
-        <div className="relative flex flex-col items-center gap-0.5 sm:gap-1">
-          {birds.map((bird, index) => {
-            const offsetClass =
-              index === 0
-                ? "translate-x-20 translate-y-2"
-                : index === 2
-                  ? "translate-x-16"
-                  : "";
-            return (
-              <div key={bird.id} className={offsetClass}>
-                <div
-                  className={
-                    index === 1
-                      ? "-translate-y-16 scale-50"
-                      : index === 2
-                        ? "scale-60"
-                        : ""
-                  }
-                >
-                  <DecorativeBird svgClassName={bird.svgClassName} />
-                </div>
-              </div>
-            );
-          })}
-          {extraBirds.map((bird, index) => {
-            const extraClass =
-              index === 0
-                ? "absolute left-full top-0 translate-x-[12rem]"
-                : "absolute left-full top-16 translate-x-25";
-            return (
-              <div key={bird.id} className={extraClass}>
-                <div className={index === 0 ? "scale-[0.6]" : ""}>
-                  <DecorativeBird svgClassName={bird.svgClassName} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <DecorativeBirds />
       <div className="relative z-10 w-full max-w-md space-y-8 rounded-3xl border border-white/25 bg-white/10 p-8 text-white shadow-2xl backdrop-blur">
         {/* Header */}
         <div>
