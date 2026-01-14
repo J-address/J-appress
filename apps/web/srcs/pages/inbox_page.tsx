@@ -60,22 +60,19 @@ export default function InboxPage() {
       actionKey: 'forward',
       label: '転送',
       ariaLabel: '転送を選択',
-      svgClassName: 'h-20 w-14',
-      labelSizeClassName: 'text-xs',
+      labelSizeClassName: 'text-sm',
     },
     {
       actionKey: 'scan',
       label: 'スキャン',
       ariaLabel: 'スキャンを選択',
-      svgClassName: 'h-10 w-14',
-      labelSizeClassName: 'text-[11px]',
+      labelSizeClassName: 'text-xs',
     },
     {
       actionKey: 'discard',
       label: '破棄',
       ariaLabel: '破棄を選択',
-      svgClassName: 'h-10 w-14',
-      labelSizeClassName: 'text-xs',
+      labelSizeClassName: 'text-sm',
     },
   ] as const;
 
@@ -97,14 +94,13 @@ export default function InboxPage() {
         </div>
         <header className='relative left-1/2 right-1/2 w-screen -translate-x-1/2 rounded-none bg-transparent px-6 py-8'>
           <div className='-mt-2 flex flex-wrap items-center justify-between gap-3'>
-            <div className='flex items-center gap-6 sm:gap-10 lg:gap-20'>
+            <div className='flex items-center gap-3 sm:gap-5 lg:gap-8'>
               {actionButtons.map((action) => (
                 <ActionButton
                   key={action.actionKey}
                   actionKey={action.actionKey}
                   label={action.label}
                   ariaLabel={action.ariaLabel}
-                  svgClassName={action.svgClassName}
                   labelSizeClassName={action.labelSizeClassName}
                   isActive={activeAction === action.actionKey}
                   onClick={() => activateSelection(action.actionKey, actionStyles[action.actionKey])}

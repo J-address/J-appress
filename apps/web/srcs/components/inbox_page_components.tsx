@@ -14,7 +14,6 @@ type ActionButtonProps = {
   actionKey: ActionKey;
   label: string;
   ariaLabel: string;
-  svgClassName: string;
   labelSizeClassName: string;
   isActive: boolean;
   onClick: () => void;
@@ -77,7 +76,6 @@ export function ActionButton({
   actionKey,
   label,
   ariaLabel,
-  svgClassName,
   labelSizeClassName,
   isActive,
   onClick,
@@ -90,24 +88,23 @@ export function ActionButton({
       onClick={onClick}
       data-action={actionKey}
     >
-      <span className='flex h-10 w-10 items-center justify-center rounded-full bg-white/1 transition group-hover:-translate-y-2 group-hover:bg-transparent'>
-        <svg viewBox='0 0 256 128' className={svgClassName} aria-hidden='true'>
-          <path
-            d='M10 86 C46 22 102 14 128 56 C156 60 206 18 246 86'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='20'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-        </svg>
-      </span>
+      <span className='flex h-10 w-10 items-center justify-center rounded-full bg-transparent' aria-hidden='true' />
       <span
-        className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 font-semibold text-black transition opacity-100 group-hover:-translate-y-2 ${labelSizeClassName} ${
-          isActive ? labelShadowClassName : ''
-        }`}
+        className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1 font-semibold text-black ${labelSizeClassName}`}
       >
-        {label}
+        <span
+          className={`absolute -left-1 top-0 h-full w-[2px] origin-top bg-black transition-transform duration-150 ${
+            isActive ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'
+          }`}
+          aria-hidden='true'
+        />
+        <span
+          className={`relative font-yomogi ${
+            isActive ? 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]' : ''
+          } group-hover:drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]`}
+        >
+          {label}
+        </span>
       </span>
     </button>
   );
