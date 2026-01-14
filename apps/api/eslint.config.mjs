@@ -33,4 +33,11 @@ export default tseslint.config(
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      // The unbound-method rule warns when you pass methods separately from their objects:
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
 );

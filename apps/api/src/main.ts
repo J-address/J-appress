@@ -11,7 +11,7 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
-  })
+  });
 
   //  Apply global validation to all routes
   app.useGlobalPipes(
