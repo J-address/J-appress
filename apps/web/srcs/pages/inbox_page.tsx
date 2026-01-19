@@ -1,9 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { ActionButton, GallerySection } from '@/srcs/components/inbox_page_components';
-import type { ActionKey, GalleryPhoto } from '@/srcs/components/inbox_page_components';
+import type { ActionKey } from '@/srcs/components/inbox_page_components';
+import {
+  getSelectedItemCount,
+  lettersGallery as lettersGalleryData,
+  packagesGallery as packagesGalleryData,
+} from '@/srcs/data/inbox_photos';
 
 const gradientStyle = {
   backgroundImage:
@@ -11,35 +17,20 @@ const gradientStyle = {
 };
 
 export default function InboxPage() {
+  const router = useRouter();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const defaultHighlight = 'ring-4 ring-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)]';
   const [highlightClass, setHighlightClass] = useState(defaultHighlight);
   const [activeAction, setActiveAction] = useState<ActionKey | null>(null);
 
-  const packagesGallery: GalleryPhoto[] = [
-    { id: 'pkg-1', src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80', alt: 'Parcel at warehouse' },
-    { id: 'pkg-2', src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80', alt: 'Boxes on trolley' },
-    { id: 'pkg-3', src: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80', alt: 'Packages stacked' },
-    { id: 'pkg-4', src: 'https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&w=1200&q=80', alt: 'Courier handling box' },
-    { id: 'pkg-5', src: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80', alt: 'Delivery truck' },
-    { id: 'pkg-6', src: 'https://images.unsplash.com/photo-1544986581-efac024faf62?auto=format&fit=crop&w=1200&q=80', alt: 'Stacked parcels' },
-  ];
-
-  const lettersGallery: GalleryPhoto[] = [
-    { id: 'let-1', src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80', alt: 'Envelopes pile' },
-    { id: 'let-2', src: 'https://images.unsplash.com/photo-1448932252197-d19750584e56?auto=format&fit=crop&w=1200&q=80', alt: 'Mailbox with letters' },
-    { id: 'let-3', src: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80', alt: 'Stamped letters' },
-    { id: 'let-4', src: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80', alt: 'Letter on table' },
-    { id: 'let-5', src: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=80', alt: 'Mail on desk' },
-    { id: 'let-6', src: 'https://images.unsplash.com/photo-1473181488821-2d23949a045a?auto=format&fit=crop&w=1200&q=80', alt: 'Handwritten letter' },
-    { id: 'let-7', src: 'https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?auto=format&fit=crop&w=1200&q=80', alt: 'Letter bundle' },
-  ];
+  const packagesGallery = packagesGalleryData;
+  const lettersGallery = lettersGalleryData;
 
   const actionStyles = {
     forward: 'ring-4 ring-sky-500 drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]',
     scan: 'ring-4 ring-[#F78D00] drop-shadow-[0_0_18px_rgba(247,141,0,0.35)]',
-    discard: 'ring-4 ring-red-500 drop-shadow-[0_0_18px_rgba(239,68,68,0.35)]',
+    discard: 'ring-4 ring-[#000000] drop-shadow-[0_0_18px_rgba(0,0,0,0.35)]',
   };
 
   const activateSelection = (actionKey: ActionKey, style: string) => {
@@ -53,6 +44,18 @@ export default function InboxPage() {
     setSelectionMode(true);
     setHighlightClass(style);
     setActiveAction(actionKey);
+  };
+
+  const selectedIdList = Array.from(selectedIds);
+  const selectedItemCount = getSelectedItemCount(selectedIdList);
+
+  const handleNextClick = () => {
+    if (activeAction !== 'discard' || selectedIds.size === 0) return;
+    const params = new URLSearchParams({
+      count: String(selectedItemCount),
+      ids: selectedIdList.join(','),
+    });
+    router.push(`/inbox/discard?${params.toString()}`);
   };
 
   const actionButtons = [
@@ -146,12 +149,17 @@ export default function InboxPage() {
         <div className='fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-white/10 backdrop-blur py-3 px-4'>
           <div className='mx-auto flex w-full max-w-6xl items-center justify-center gap-6 text-white'>
             <span className='text-sm text-white/85'>
-              {selectedIds.size}件選択中
+              {selectedItemCount}件選択中
             </span>
             <button
               type='button'
-              disabled
-              className='rounded-full bg-white px-8 py-2 text-sm font-semibold text-[#0C1B3D] opacity-80 cursor-not-allowed shadow'
+              disabled={activeAction !== 'discard'}
+              onClick={handleNextClick}
+              className={`rounded-full px-8 py-2 text-sm font-semibold shadow transition ${
+                activeAction === 'discard'
+                  ? 'bg-white text-[#0C1B3D] hover:brightness-95'
+                  : 'cursor-not-allowed bg-white/70 text-[#0C1B3D]/70 opacity-80'
+              }`}
             >
               次へ
             </button>

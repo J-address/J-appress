@@ -259,7 +259,7 @@ export function PhotoGallery({
             <div
               key={photo.id}
               className={`group relative aspect-[4/3] ${
-                stackPairs ? 'overflow-visible' : 'overflow-hidden rounded-2xl'
+                stackPairs ? 'overflow-visible' : 'overflow-visible rounded-2xl'
               }`}
               onPointerDown={() => startLongPress(photo)}
               onPointerUp={() => {
