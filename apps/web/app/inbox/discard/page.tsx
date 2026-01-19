@@ -18,10 +18,7 @@ export default function DiscardPage() {
     .split(',')
     .map((id) => id.trim())
     .filter(Boolean);
-  const computedCount = getSelectedItemCount(selectedIds);
-  const countParam = Number(searchParams.get('count') ?? 0);
-  const displayCount =
-    Number.isFinite(countParam) && countParam > 0 ? countParam : computedCount;
+  const displayCount = getSelectedItemCount(selectedIds);
   const selectedIdSet = new Set(selectedIds);
   const selectedLetters = lettersGallery.filter((photo) => selectedIdSet.has(photo.id));
   const packagePairs = packagesGallery.reduce(

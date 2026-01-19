@@ -52,7 +52,6 @@ export default function InboxPage() {
   const handleNextClick = () => {
     if (activeAction !== 'discard' || selectedIds.size === 0) return;
     const params = new URLSearchParams({
-      count: String(selectedItemCount),
       ids: selectedIdList.join(','),
     });
     router.push(`/inbox/discard?${params.toString()}`);
