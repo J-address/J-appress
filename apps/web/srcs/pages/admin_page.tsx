@@ -6,12 +6,11 @@ const gradientStyle = {
 };
 
 type SidebarButtonProps = {
-  icon: string;
   label: string;
   isActive?: boolean;
 };
 
-function SidebarButton({ icon, label, isActive }: SidebarButtonProps) {
+function SidebarButton({label, isActive }: SidebarButtonProps) {
   const baseClasses =
     'flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition';
   const activeClasses =
@@ -24,7 +23,6 @@ function SidebarButton({ icon, label, isActive }: SidebarButtonProps) {
       type='button'
       className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
     >
-      <span className='text-lg'>{icon}</span>
       {label}
     </button>
   );
@@ -43,10 +41,10 @@ export default function AdminPage() {
             </div>
           </div>
           <nav className='mt-6 space-y-2'>
-            <SidebarButton icon='▣' label='ホーム' isActive />
-            <SidebarButton icon='◎' label='お客様' />
-            <SidebarButton icon='▦' label='受信箱' />
-            <SidebarButton icon='◇' label='設定' />
+            <SidebarButton  label='ホーム' isActive />
+            <SidebarButton  label='お客様' />
+            <SidebarButton  label='受信箱' />
+            <SidebarButton  label='設定' />
           </nav>
         </aside>
       </div>
