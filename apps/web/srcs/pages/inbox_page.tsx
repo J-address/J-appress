@@ -1,15 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { ActionButton, GallerySection } from '@/srcs/components/inbox_page_components';
 import type { ActionKey } from '@/srcs/components/inbox_page_components';
-import {
-  getSelectedItemCount,
-  lettersGallery as lettersGalleryData,
-  packagesGallery as packagesGalleryData,
-} from '@/srcs/data/inbox_photos';
+import { getSelectedItemCount, defaultLettersGallery, defaultPackagesGallery } from '@/srcs/data/inbox_photos';
+import { customers } from '@/srcs/data/inbox_customers';
+import { getCustomerInbox } from '@/srcs/data/inbox_storage';
 
 const gradientStyle = {
   backgroundImage:
@@ -18,14 +16,24 @@ const gradientStyle = {
 
 export default function InboxPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const customerIdParam = searchParams?.get('customer') ?? '';
+  const activeCustomer = useMemo(() => {
+    if (customerIdParam) {
+      const found = customers.find((customer) => customer.id === customerIdParam);
+      if (found) return found;
+    }
+    return customers[0];
+  }, [customerIdParam]);
+
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const defaultHighlight = 'ring-4 ring-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)]';
   const [highlightClass, setHighlightClass] = useState(defaultHighlight);
   const [activeAction, setActiveAction] = useState<ActionKey | null>(null);
-
-  const packagesGallery = packagesGalleryData;
-  const lettersGallery = lettersGalleryData;
+  const [packagesGallery, setPackagesGallery] = useState(defaultPackagesGallery);
+  const [lettersGallery, setLettersGallery] = useState(defaultLettersGallery);
+  const [deadline, setDeadline] = useState('26.04.09');
 
   const actionStyles = {
     forward: 'ring-4 ring-sky-500 drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]',
@@ -47,12 +55,13 @@ export default function InboxPage() {
   };
 
   const selectedIdList = Array.from(selectedIds);
-  const selectedItemCount = getSelectedItemCount(selectedIdList);
+  const selectedItemCount = getSelectedItemCount(selectedIdList, packagesGallery, lettersGallery);
 
   const handleNextClick = () => {
     if (activeAction !== 'discard' || selectedIds.size === 0) return;
     const params = new URLSearchParams({
       ids: selectedIdList.join(','),
+      ...(activeCustomer?.id ? { customer: activeCustomer.id } : {}),
     });
     router.push(`/inbox/discard?${params.toString()}`);
   };
@@ -77,6 +86,18 @@ export default function InboxPage() {
       labelSizeClassName: 'text-sm',
     },
   ] as const;
+
+  useEffect(() => {
+    if (!activeCustomer) return;
+    const inbox = getCustomerInbox(activeCustomer.id);
+    setPackagesGallery(inbox.packages);
+    setLettersGallery(inbox.letters);
+    setDeadline(inbox.deadline);
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+    setHighlightClass(defaultHighlight);
+    setActiveAction(null);
+  }, [activeCustomer, defaultHighlight]);
 
   return (
     <div className='relative min-h-screen overflow-hidden text-white' style={gradientStyle}>
@@ -110,9 +131,11 @@ export default function InboxPage() {
               ))}
             </div>
             <div className='flex items-baseline gap-6 sm:gap-10 lg:gap-20'>
-              <span className='text-xs font-yomogi text-black sm:text-xl'>e転居期限: 26.04.09</span>
+              <span className='text-xs font-yomogi text-black sm:text-xl'>
+                e転居期限: {deadline}
+              </span>
               <span className='cursor-pointer text-xl font-yomogi text-black transition hover:underline hover:decoration-black hover:decoration-2 hover:underline-offset-4 hover:drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)] sm:text-2xl'>
-                大谷 優光
+                {activeCustomer?.displayName ?? 'お客様'}
               </span>
             </div>
           </div>

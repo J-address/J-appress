@@ -1,6 +1,6 @@
 import type { GalleryPhoto } from '@/srcs/components/inbox_page_components';
 
-export const packagesGallery: GalleryPhoto[] = [
+export const defaultPackagesGallery: GalleryPhoto[] = [
   {
     id: 'pkg-1',
     src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
@@ -33,7 +33,7 @@ export const packagesGallery: GalleryPhoto[] = [
   },
 ];
 
-export const lettersGallery: GalleryPhoto[] = [
+export const defaultLettersGallery: GalleryPhoto[] = [
   {
     id: 'let-1',
     src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80',
@@ -71,7 +71,11 @@ export const lettersGallery: GalleryPhoto[] = [
   },
 ];
 
-export function getSelectedItemCount(selectedIds: string[]) {
+export function getSelectedItemCount(
+  selectedIds: string[],
+  packagesGallery: GalleryPhoto[],
+  lettersGallery: GalleryPhoto[],
+) {
   const packageIndexById = new Map(
     packagesGallery.map((photo, index) => [photo.id, index]),
   );
