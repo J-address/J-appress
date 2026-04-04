@@ -1,231 +1,239 @@
-# J-address Web Application
+# J-address
 
-Japanese mail forwarding service - Receive mail at a Japanese address and manage it online.
+Japanese virtual mail address service — receive physical mail at a Japanese address and manage it online (forward, scan, or discard).
 
-## 📁 Project Structure
+> Versions verified via context7 on 2026-04-04
+
+---
+
+## Project Structure
 
 ```
 J-app/
 ├── apps/
-│   ├── web/                    # Next.js frontend
-│   │   ├── app/               # App router pages
-│   │   │   ├── inbox/        # Inbox management
-│   │   │   ├── contact/      # Contact page
-│   │   │   └── page.tsx      # Home page
-│   │   ├── srcs/
-│   │   │   ├── components/   # React components
-│   │   │   └── pages/        # Additional pages
-│   │   └── package.json
+│   ├── web/                    # Next.js frontend (port 3000)
+│   │   └── app/               # App Router pages
+│   │       ├── page.tsx       # Home
+│   │       ├── login/         # Login
+│   │       ├── signup/        # Sign up
+│   │       ├── inbox/         # Inbox management
+│   │       └── contact/       # Contact
 │   │
-│   └── api/                   # NestJS backend
+│   └── api/                   # NestJS backend (port 3001)
 │       ├── src/
-│       │   ├── main.ts
-│       │   ├── app.module.ts
-│       │   └── app.service.ts
-│       ├── prisma/
-│       │   └── schema.prisma  # Database schema
-│       └── package.json
+│       │   ├── auth/          # JWT auth, guards, strategies
+│       │   ├── admin/         # Admin-only routes
+│       │   └── prisma/        # Prisma service
+│       └── prisma/
+│           └── schema.prisma  # Database schema
 │
-├── packages/
-│   └── shared/                # Shared types & DTOs
-│       ├── src/
-│       │   ├── types/        # TypeScript types
-│       │   └── dto/          # Data Transfer Objects
-│       └── package.json
-│
-├── docker-compose.yml         # Docker services
-├── package.json              # Workspace configuration
-└── tsconfig.base.json        # Shared TypeScript config
+└── packages/
+    └── shared/                # Shared TypeScript types & DTOs
+        └── src/
+            ├── types/
+            └── dto/
 ```
 
-## 🛠️ Tech Stack
+---
 
-### Frontend
+## Tech Stack
 
-- **Next.js 16** - React framework with App Router
-- **React 19** - UI library
-- **TypeScript** - Type safety
-- **Tailwind CSS 4** - Styling
-- **Headless UI** - Accessible components
+### Current
 
-### Backend
+| Layer | Technology | Version |
+|---|---|---|
+| Frontend | Next.js | 16.2.2 |
+| UI | React | 19.2.0 |
+| Language | TypeScript | 6.0.2 |
+| Styling | Tailwind CSS | 4.x |
+| UI components | Headless UI | 2.x |
+| Backend | NestJS | 11.1.16 |
+| Runtime | Node.js | 24.x |
+| ORM | Prisma | 7.5.0 |
+| Database | PostgreSQL | 16.x |
+| Auth | Passport.js + JWT | — |
+| Testing | Jest + Supertest | 30.x |
+| Package manager | pnpm | 9.x |
 
-- **NestJS 11** - Node.js framework
-- **Prisma 5** - ORM
-- **PostgreSQL 15** - Database
-- **TypeScript** - Type safety
+### Planned
 
-### Infrastructure
+| Technology | Version | Purpose |
+|---|---|---|
+| Biome | 2.2.4 | Replace ESLint+Prettier |
+| Zod | 4.0.1 | Replace class-validator |
+| Redux Toolkit + RTK Query | 2.11.0 | Frontend state management |
+| Redis (ioredis) | 5.4.0 | Cache + real-time adapter |
+| Socket.io | 4.x | Real-time inbox notifications |
+| AWS S3 + CloudFront | SDK v3 | Scanned mail image storage |
+| Stripe Node | 19.1.0 | Subscription billing |
+| SendGrid + MJML | — | Email notifications |
+| Sentry | latest | Production error monitoring |
+| @anthropic-ai/sdk | latest | AI mail classification |
+| Playwright | 1.58.2 | E2E testing |
+| shadcn/ui | latest | UI components — user-facing + admin, RSC-native, built on Radix UI + Tailwind |
 
-- **Docker** - Containerization
-- **AWS** - Cloud hosting (EC2/ECS, S3, RDS, CloudFront)
-- **GitHub Actions** - CI/CD
+---
 
-### Additional Features
-
-- **Redis + BullMQ** - Job queues
-- **JWT + 2FA + RBAC** - Authentication & Authorization
-- **Stripe** - Payment processing
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm 9+
+- Node.js 24+
+- pnpm 9+
 - Docker & Docker Compose
 
 ### Installation
 
-1. **Clone the repository**
+1. Clone the repository
 
    ```bash
    git clone <repository-url>
    cd J-app
    ```
 
-2. **Install dependencies**
+2. Install dependencies
 
    ```bash
-   npm install
+   pnpm install
    ```
 
-3. **Set up environment variables**
+3. Set up environment variables
 
-   Create `.env` file in `apps/api/`:
-
+   `apps/api/.env`:
    ```env
    DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/jaddress_db"
+   JWT_SECRET="your-secret-key"
+   FRONTEND_URL=http://localhost:3000
    PORT=3001
    ```
 
-   Create `.env.local` file in `apps/web/`:
-
+   `apps/web/.env.local`:
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:3001
    ```
 
-4. **Start the database**
+4. Start the database
 
    ```bash
    docker-compose up -d db
    ```
 
-5. **Run database migrations**
+5. Run database migrations
 
    ```bash
-   npm run prisma:generate
-   npm run prisma:migrate
+   cd apps/api
+   pnpm prisma:generate
+   pnpm prisma:migrate
    ```
 
-6. **Start development servers**
-
-   Option 1 - Run both servers:
+6. Start development servers
 
    ```bash
-   npm run dev
+   # Both apps
+   pnpm dev
+
+   # Separately
+   cd apps/api && pnpm dev   # API on :3001
+   cd apps/web && pnpm dev   # Web on :3000
    ```
 
-   Option 2 - Run separately:
-
-   ```bash
-   # Terminal 1 - Backend
-   npm run dev:api
-
-   # Terminal 2 - Frontend
-   npm run dev:web
-   ```
-
-7. **Access the application**
+7. Access the application
    - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3001
-   - Prisma Studio: `npm run prisma:studio --workspace=apps/api`
+   - API: http://localhost:3001
+   - Prisma Studio: `cd apps/api && pnpm prisma:studio`
 
-## 📦 NPM Scripts
+---
 
-### Root Commands
+## Commands
 
-```bash
-npm run dev              # Start both web and api
-npm run dev:web          # Start frontend only
-npm run dev:api          # Start backend only
-npm run build            # Build all workspaces
-npm run lint             # Lint all workspaces
-npm run typecheck        # Type check all workspaces
-npm run test             # Run tests in all workspaces
-npm run clean            # Remove all node_modules
-```
-
-### Prisma Commands
+### Root
 
 ```bash
-npm run prisma:generate  # Generate Prisma client
-npm run prisma:migrate   # Run database migrations
-npm run prisma:studio    # Open Prisma Studio
+pnpm dev          # Start both web and api
+pnpm build        # Build all workspaces
+pnpm lint         # Lint all workspaces
+pnpm typecheck    # Type check all workspaces
+pnpm test         # Run tests in all workspaces
 ```
 
-## 📊 Database Schema
+### API
+
+```bash
+cd apps/api
+pnpm test           # Unit tests
+pnpm test:cov       # Coverage report
+pnpm test:e2e       # E2E tests
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm prisma:studio
+```
+
+### Adding packages
+
+```bash
+pnpm add <package> --filter=@j-address/web
+pnpm add <package> --filter=@j-address/api
+pnpm add <package> --filter=@j-address/shared
+```
+
+---
+
+## Database Schema
 
 ### User
-
-- id (UUID)
-- email (unique)
-- password
-- createdAt
-- updatedAt
+| Field | Type | Notes |
+|---|---|---|
+| id | String (UUID) | Primary key |
+| email | String | Unique |
+| password | String | bcrypt hashed |
+| role | Role | USER or ADMIN |
+| createdAt | DateTime | |
+| updatedAt | DateTime | |
 
 ### Inbox
+| Field | Type | Notes |
+|---|---|---|
+| id | Int | Auto-increment |
+| imageUrl | String? | S3 URL of scanned mail photo |
+| status | InboxStatus | RECEIVED → ACTION_REQUESTED → COMPLETED |
+| requestedAction | ActionType | NONE / SEND / SCAN / DISCARD |
+| userId | String | Foreign key → User |
+| createdAt | DateTime | |
+| updatedAt | DateTime | |
 
-- id (auto-increment)
-- imageUrl (optional)
-- status (RECEIVED | ACTION_REQUESTED | COMPLETED)
-- requestedAction (NONE | SEND | SCAN | DISCARD)
-- userId (foreign key)
-- createdAt
-- updatedAt
+---
 
-## 🔧 Development
+## Inbox Flow
 
-### Adding Dependencies
-
-```bash
-# Add to frontend
-npm install <package> --workspace=apps/web
-
-# Add to backend
-npm install <package> --workspace=apps/api
-
-# Add to shared package
-npm install <package> --workspace=packages/shared
+```
+Mail arrives
+    → status: RECEIVED
+    → user sets requestedAction (SEND / SCAN / DISCARD)
+    → status: ACTION_REQUESTED
+    → admin processes the action
+    → status: COMPLETED
 ```
 
-### Using Shared Types
+---
+
+## Shared Types
 
 ```typescript
-// In apps/web or apps/api
 import { InboxStatus, ActionType, User, Inbox } from "@j-address/shared";
 ```
 
-## 🐳 Docker
+---
 
-### Start all services (when Dockerfiles are created)
-
-```bash
-docker-compose up
-```
-
-### Stop all services
+## Docker
 
 ```bash
-docker-compose down
+docker-compose up -d     # Start services
+docker-compose down      # Stop services
+docker-compose logs -f   # View logs
 ```
 
-### View logs
+---
 
-```bash
-docker-compose logs -f
-```
-
-## 📝 License
+## License
 
 ISC
