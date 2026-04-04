@@ -1,19 +1,21 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../../generated/prisma';
 
-/**
- * User information returned in auth responses (signup/login)
- * Excludes sensitive data like password
- */
 export class UserResponse {
+  @ApiProperty({ example: 'uuid-123' })
   id!: string;
+
+  @ApiProperty({ example: 'user@example.com' })
   email!: string;
+
+  @ApiProperty({ enum: Role, example: Role.USER })
   role!: Role;
 }
 
-/**
- * Response returned from signup and login endpoints
- */
 export class AuthResponse {
+  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' })
   access_token!: string;
+
+  @ApiProperty({ type: UserResponse })
   user!: UserResponse;
 }

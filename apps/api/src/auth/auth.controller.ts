@@ -1,25 +1,37 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthResponse, UserResponse } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import type { AuthUser } from './types/auth.types';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, type: AuthResponse })
+  @ApiResponse({ status: 409, description: 'Email already exists' })
   @Post('signup')
   async signup(@Body() dto: RegisterDto) {
     return this.authService.signup(dto);
   }
 
+  @ApiOperation({ summary: 'Login with email and password' })
+  @ApiResponse({ status: 200, type: AuthResponse })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @Post('login')
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, type: UserResponse })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: AuthUser): AuthUser {
