@@ -47,10 +47,10 @@ export function GallerySection({
   const photoCount = stackPairs ? Math.ceil(photos.length / 2) : photos.length;
 
   return (
-    <div className='mx-auto w-full max-w-5xl'>
-      <div className='mb-2 flex items-end justify-between gap-4'>
-        <h2 className='text-2xl font-semibold text-white'>{title}</h2>
-        <span className='text-sm font-semibold text-white/80'>写真数: {photoCount}</span>
+    <div className="mx-auto w-full max-w-5xl">
+      <div className="mb-2 flex items-end justify-between gap-4">
+        <h2 className="text-2xl font-semibold text-white">{title}</h2>
+        <span className="text-sm font-semibold text-white/80">写真数: {photoCount}</span>
       </div>
       <PhotoGallery
         title={title}
@@ -80,13 +80,16 @@ export function ActionButton({
 }: ActionButtonProps) {
   return (
     <button
-      type='button'
-      className='group relative flex flex-col items-center text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/70'
+      type="button"
+      className="group relative flex flex-col items-center text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/70"
       aria-label={ariaLabel}
       onClick={onClick}
       data-action={actionKey}
     >
-      <span className='flex h-10 w-10 items-center justify-center rounded-full bg-transparent' aria-hidden='true' />
+      <span
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent"
+        aria-hidden="true"
+      />
       <span
         className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1 font-semibold text-black ${labelSizeClassName}`}
       >
@@ -94,7 +97,7 @@ export function ActionButton({
           className={`absolute -left-1 top-0 h-full w-[2px] origin-top bg-black transition-transform duration-150 ${
             isActive ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'
           }`}
-          aria-hidden='true'
+          aria-hidden="true"
         />
         <span
           className={`relative font-yomogi ${

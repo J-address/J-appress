@@ -72,9 +72,7 @@ export const lettersGallery: GalleryPhoto[] = [
 ];
 
 export function getSelectedItemCount(selectedIds: string[]) {
-  const packageIndexById = new Map(
-    packagesGallery.map((photo, index) => [photo.id, index]),
-  );
+  const packageIndexById = new Map(packagesGallery.map((photo, index) => [photo.id, index]));
   const packagePairs = new Set<number>();
   let letterCount = 0;
 

@@ -20,14 +20,14 @@ function DecorativeBird({ svgClassName }: DecorativeBirdProps) {
 }
 
 const birds = [
-  { id: "bird-1", svgClassName: "h-20 w-14" },
-  { id: "bird-2", svgClassName: "h-10 w-14" },
-  { id: "bird-3", svgClassName: "h-10 w-14" },
+  { id: 'bird-1', svgClassName: 'h-20 w-14' },
+  { id: 'bird-2', svgClassName: 'h-10 w-14' },
+  { id: 'bird-3', svgClassName: 'h-10 w-14' },
 ] as const;
 
 const extraBirds = [
-  { id: "bird-4", svgClassName: "h-10 w-14" },
-  { id: "bird-5", svgClassName: "h-10 w-14" },
+  { id: 'bird-4', svgClassName: 'h-10 w-14' },
+  { id: 'bird-5', svgClassName: 'h-10 w-14' },
 ] as const;
 
 export default function DecorativeBirds() {
@@ -36,21 +36,11 @@ export default function DecorativeBirds() {
       <div className="relative flex flex-col items-center gap-0.5 sm:gap-1">
         {birds.map((bird, index) => {
           const offsetClass =
-            index === 0
-              ? "translate-x-26 translate-y-9"
-              : index === 2
-                ? "translate-x-16"
-                : "";
+            index === 0 ? 'translate-x-26 translate-y-9' : index === 2 ? 'translate-x-16' : '';
           return (
             <div key={bird.id} className={offsetClass}>
               <div
-                className={
-                  index === 1
-                    ? "-translate-y-16 scale-40"
-                    : index === 2
-                      ? "scale-90"
-                      : ""
-                }
+                className={index === 1 ? '-translate-y-16 scale-40' : index === 2 ? 'scale-90' : ''}
               >
                 <DecorativeBird svgClassName={bird.svgClassName} />
               </div>
@@ -60,11 +50,11 @@ export default function DecorativeBirds() {
         {extraBirds.map((bird, index) => {
           const extraClass =
             index === 0
-              ? "absolute left-full top-0 translate-x-50"
-              : "absolute left-full top-16 translate-x-25";
+              ? 'absolute left-full top-0 translate-x-50'
+              : 'absolute left-full top-16 translate-x-25';
           return (
             <div key={bird.id} className={extraClass}>
-              <div className={index === 0 ? "scale-55" : ""}>
+              <div className={index === 0 ? 'scale-55' : ''}>
                 <DecorativeBird svgClassName={bird.svgClassName} />
               </div>
             </div>

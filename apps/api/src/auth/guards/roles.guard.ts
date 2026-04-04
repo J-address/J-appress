@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { Role } from '../../../generated/prisma';
@@ -40,17 +35,13 @@ export class RolesGuard implements CanActivate {
 
     // Get the request object which contains the authenticated user
     // Type it as Express Request with optional user property
-    const request = context
-      .switchToHttp()
-      .getRequest<Request & { user?: AuthUser }>();
+    const request = context.switchToHttp().getRequest<Request & { user?: AuthUser }>();
     const user = request.user; // User info attached by JwtAuthGuard
 
     // Check if user exists and has one of the required roles
     // Using optional chaining for safe access
     if (!user || !user.role || !requiredRoles.includes(user.role)) {
-      throw new ForbiddenException(
-        'You do not have permission to access this resource',
-      );
+      throw new ForbiddenException('You do not have permission to access this resource');
     }
 
     return true; // User has required role, allow access
