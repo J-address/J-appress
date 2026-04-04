@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-import { JwtStrategy } from './jwt.strategy';
-import { PrismaService } from '../../prisma/prisma.service';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Role } from '../../../generated/prisma';
+import { PrismaService } from '../../prisma/prisma.service';
+import { JwtStrategy } from './jwt.strategy';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
@@ -71,12 +71,8 @@ describe('JwtStrategy', () => {
     it('should throw UnauthorizedException when user does not exist', async () => {
       (prismaService.user.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(strategy.validate(mockPayload)).rejects.toThrow(
-        UnauthorizedException,
-      );
-      await expect(strategy.validate(mockPayload)).rejects.toThrow(
-        'User not found',
-      );
+      await expect(strategy.validate(mockPayload)).rejects.toThrow(UnauthorizedException);
+      await expect(strategy.validate(mockPayload)).rejects.toThrow('User not found');
     });
 
     it('should handle admin users correctly', async () => {

@@ -1,7 +1,7 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RolesGuard } from './roles.guard';
 import { Role } from '../../../generated/prisma';
+import { RolesGuard } from './roles.guard';
 
 describe('RolesGuard', () => {
   let guard: RolesGuard;
@@ -93,9 +93,7 @@ describe('RolesGuard', () => {
     });
 
     it('should allow access if user has one of multiple required roles', () => {
-      jest
-        .spyOn(reflector, 'getAllAndOverride')
-        .mockReturnValue([Role.ADMIN, Role.USER]);
+      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([Role.ADMIN, Role.USER]);
 
       const mockUser = {
         userId: 'user-123',

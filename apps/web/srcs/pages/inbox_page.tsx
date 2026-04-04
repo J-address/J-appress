@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { ActionButton, GallerySection } from '@/srcs/components/inbox_page_components';
+import { useState } from 'react';
 import type { ActionKey } from '@/srcs/components/inbox_page_components';
+import { ActionButton, GallerySection } from '@/srcs/components/inbox_page_components';
 import {
   getSelectedItemCount,
   lettersGallery as lettersGalleryData,
@@ -79,24 +78,24 @@ export default function InboxPage() {
   ] as const;
 
   return (
-    <div className='relative min-h-screen overflow-hidden text-white' style={gradientStyle}>
-      <div className='fixed inset-x-0 top-0 z-30'>
-        <div className='pointer-events-none absolute inset-x-0 top-0'>
+    <div className="relative min-h-screen overflow-hidden text-white" style={gradientStyle}>
+      <div className="fixed inset-x-0 top-0 z-30">
+        <div className="pointer-events-none absolute inset-x-0 top-0">
           <svg
-            className='h-60 w-full opacity-100'
-            viewBox='0 0 1440 290'
-            preserveAspectRatio='none'
-            aria-hidden='true'
+            className="h-60 w-full opacity-100"
+            viewBox="0 0 1440 290"
+            preserveAspectRatio="none"
+            aria-hidden="true"
           >
             <path
-              d='M0,200 C180,150 360,130 540,150 C720,180 900,230 1080,210 C1260,190 1350,150 1440,120 L1440,0 L0,0 Z'
-              fill='#e6eaef'
+              d="M0,200 C180,150 360,130 540,150 C720,180 900,230 1080,210 C1260,190 1350,150 1440,120 L1440,0 L0,0 Z"
+              fill="#e6eaef"
             />
           </svg>
         </div>
-        <header className='relative left-1/2 right-1/2 w-screen -translate-x-1/2 rounded-none bg-transparent px-6 py-8'>
-          <div className='-mt-2 flex flex-wrap items-center justify-between gap-3'>
-            <div className='flex items-center gap-3 sm:gap-5 lg:gap-8'>
+        <header className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 rounded-none bg-transparent px-6 py-8">
+          <div className="-mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-5 lg:gap-8">
               {actionButtons.map((action) => (
                 <ActionButton
                   key={action.actionKey}
@@ -105,25 +104,26 @@ export default function InboxPage() {
                   ariaLabel={action.ariaLabel}
                   labelSizeClassName={action.labelSizeClassName}
                   isActive={activeAction === action.actionKey}
-                  onClick={() => activateSelection(action.actionKey, actionStyles[action.actionKey])}
+                  onClick={() =>
+                    activateSelection(action.actionKey, actionStyles[action.actionKey])
+                  }
                 />
               ))}
             </div>
-            <div className='flex items-baseline gap-6 sm:gap-10 lg:gap-20'>
-              <span className='text-xs font-yomogi text-black sm:text-xl'>e転居期限: 26.04.09</span>
-              <span className='cursor-pointer text-xl font-yomogi text-black transition hover:underline hover:decoration-black hover:decoration-2 hover:underline-offset-4 hover:drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)] sm:text-2xl'>
+            <div className="flex items-baseline gap-6 sm:gap-10 lg:gap-20">
+              <span className="text-xs font-yomogi text-black sm:text-xl">e転居期限: 26.04.09</span>
+              <span className="cursor-pointer text-xl font-yomogi text-black transition hover:underline hover:decoration-black hover:decoration-2 hover:underline-offset-4 hover:drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)] sm:text-2xl">
                 大谷 優光
               </span>
             </div>
           </div>
         </header>
       </div>
-      <div className='relative mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 pb-12 pt-52'>
-
+      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 pb-12 pt-52">
         <GallerySection
-          title='お荷物'
+          title="お荷物"
           photos={packagesGallery}
-          gridClassName='grid gap-4 sm:grid-cols-3 lg:grid-cols-4'
+          gridClassName="grid gap-4 sm:grid-cols-3 lg:grid-cols-4"
           pairWithNextOnSelect
           stackPairs
           selectionMode={selectionMode}
@@ -134,9 +134,9 @@ export default function InboxPage() {
         />
 
         <GallerySection
-          title='お手紙'
+          title="お手紙"
           photos={lettersGallery}
-          gridClassName='grid gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
+          gridClassName="grid gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
           selectionMode={selectionMode}
           onSelectionModeChange={setSelectionMode}
           selected={selectedIds}
@@ -145,13 +145,11 @@ export default function InboxPage() {
         />
       </div>
       {selectedIds.size > 0 && (
-        <div className='fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-white/10 backdrop-blur py-3 px-4'>
-          <div className='mx-auto flex w-full max-w-6xl items-center justify-center gap-6 text-white'>
-            <span className='text-sm text-white/85'>
-              {selectedItemCount}件選択中
-            </span>
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-white/10 backdrop-blur py-3 px-4">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-center gap-6 text-white">
+            <span className="text-sm text-white/85">{selectedItemCount}件選択中</span>
             <button
-              type='button'
+              type="button"
               disabled={activeAction !== 'discard'}
               onClick={handleNextClick}
               className={`rounded-full px-8 py-2 text-sm font-semibold shadow transition ${

@@ -1,62 +1,60 @@
-"use client"; // Marks this file as a Client Component so it can use hooks and browser APIs
+'use client'; // Marks this file as a Client Component so it can use hooks and browser APIs
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { Role } from "@j-address/shared";
-import DecorativeBirds from "../components/decorative_birds";
+import { Role } from '@j-address/shared';
+import { useRouter } from 'next/navigation';
+import { type FormEvent, useState } from 'react';
+import DecorativeBirds from '../components/decorative_birds';
 
 const gradientStyle = {
   backgroundImage:
-    "linear-gradient(180deg, #d8daddff 3%, #c0dfffff 16%, #6aa2f0ff 36%, #0155c3ff 90%)",
+    'linear-gradient(180deg, #d8daddff 3%, #c0dfffff 16%, #6aa2f0ff 36%, #0155c3ff 90%)',
 };
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission behavior
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
       // Get API URL from environment variable
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
       // Make POST request to the login endpoint
       const response = await fetch(`${apiUrl}/auth/login`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "ログインに失敗しました");
+        throw new Error(data.message || 'ログインに失敗しました');
       }
 
       const data = await response.json();
 
       // Store the token
       if (data.access_token) {
-        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem('access_token', data.access_token);
 
         // Redirect based on user role
         if (data.user?.role === Role.ADMIN) {
-          router.replace("/admin");
+          router.replace('/admin');
         } else {
-          router.replace("/inbox");
+          router.replace('/inbox');
         }
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "予期しないエラーが発生しました"
-      );
+      setError(err instanceof Error ? err.message : '予期しないエラーが発生しました');
     } finally {
       setIsLoading(false);
     }
@@ -87,9 +85,7 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             J-addressにログイン
           </h2>
-          <p className="mt-2 text-center text-sm text-white/80">
-            日本の郵便物転送サービス
-          </p>
+          <p className="mt-2 text-center text-sm text-white/80">日本の郵便物転送サービス</p>
         </div>
 
         {/* Form */}
@@ -147,16 +143,13 @@ export default function LoginPage() {
               disabled={isLoading}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-white/90 px-4 py-2 text-sm font-medium text-[#0C1B3D] shadow hover:bg-white focus:outline-none focus:ring-2 focus:ring-white/70 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? "ログイン中..." : "ログイン"}
+              {isLoading ? 'ログイン中...' : 'ログイン'}
             </button>
           </div>
 
           {/* Sign up link */}
           <div className="text-sm text-center">
-            <a
-              href="/signup"
-              className="font-medium text-white underline-offset-4 hover:underline"
-            >
+            <a href="/signup" className="font-medium text-white underline-offset-4 hover:underline">
               アカウントをお持ちでない方は新規登録
             </a>
           </div>

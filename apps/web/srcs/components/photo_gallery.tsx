@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type Photo = { id: string; src: string; alt: string };
@@ -74,8 +75,7 @@ export function PhotoGallery({
   };
 
   const highlightClass =
-    selectedHighlightClass ??
-    'ring-4 ring-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)]';
+    selectedHighlightClass ?? 'ring-4 ring-white drop-shadow-[0_0_20px_rgba(255,255,255,0.35)]';
 
   useEffect(
     () => () => {
@@ -141,7 +141,7 @@ export function PhotoGallery({
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if (selectionModeValue && !target.closest('[data-photo-tile=\"true\"]')) {
+    if (selectionModeValue && !target.closest('[data-photo-tile="true"]')) {
       clearSelection();
     }
   };
@@ -217,25 +217,25 @@ export function PhotoGallery({
 
   return (
     <div
-      className='space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur'
+      className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur"
       onClick={handleBackgroundClick}
     >
       {showHeader && (
-        <div className='flex flex-wrap items-center justify-between gap-3'>
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className='text-2xl font-semibold text-white'>{title}</h1>
-            {subtitle && <p className='text-sm text-white/70'>{subtitle}</p>}
+            <h1 className="text-2xl font-semibold text-white">{title}</h1>
+            {subtitle && <p className="text-sm text-white/70">{subtitle}</p>}
           </div>
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             {selectionModeValue && showSelectedBadge && (
-              <span className='rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85'>
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85">
                 選択済み: {selectedCount}
               </span>
             )}
             {selectionModeValue && (
               <button
-                type='button'
-                className='rounded-full border border-white/40 bg-white/10 px-3 py-1 text-xs font-semibold text-white transition hover:border-white/60 hover:bg-white/20'
+                type="button"
+                className="rounded-full border border-white/40 bg-white/10 px-3 py-1 text-xs font-semibold text-white transition hover:border-white/60 hover:bg-white/20"
                 onClick={(e) => {
                   e.stopPropagation();
                   selectAll();
@@ -272,7 +272,7 @@ export function PhotoGallery({
               }}
               onPointerLeave={cancelLongPress}
               onPointerCancel={cancelLongPress}
-              role='button'
+              role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -280,16 +280,16 @@ export function PhotoGallery({
                   handleTileClick(photo, index);
                 }
               }}
-              data-photo-tile='true'
+              data-photo-tile="true"
             >
               {stackPairs && pairedPhoto && (
-                <div className='pointer-events-none absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-white/10 bg-white/5 shadow-lg'>
+                <div className="pointer-events-none absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-white/10 bg-white/5 shadow-lg">
                   <img
                     src={pairedPhoto.src}
                     alt={pairedPhoto.alt}
-                    className='h-full w-full object-cover opacity-90'
+                    className="h-full w-full object-cover opacity-90"
                   />
-                  <div className='absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-black/20" />
                 </div>
               )}
               <div
@@ -301,9 +301,9 @@ export function PhotoGallery({
                 <img
                   src={photo.src}
                   alt={photo.alt}
-                  className='h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]'
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                 />
-                <div className='absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
               </div>
             </div>
           );
@@ -314,36 +314,33 @@ export function PhotoGallery({
         (typeof document !== 'undefined'
           ? createPortal(
               <div
-                className='fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-4'
+                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-4"
                 onClick={closePreview}
-                role='presentation'
+                role="presentation"
               >
                 <div
-                  className='relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl'
+                  className="relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <img
                     src={currentPhoto.src}
                     alt={currentPhoto.alt}
-                    className='h-auto max-h-[85vh] w-auto max-w-full object-contain'
+                    className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
                   />
                   {currentDisplayNumber !== null && (
-                    <PhotoIndexBadge
-                      value={currentDisplayNumber}
-                      className='left-4 top-4'
-                    />
+                    <PhotoIndexBadge value={currentDisplayNumber} className="left-4 top-4" />
                   )}
                   <button
-                    type='button'
-                    className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700'
+                    type="button"
+                    className="absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
                     onClick={closePreview}
                   >
                     X
                   </button>
                   {stackPairs && (
                     <button
-                      type='button'
-                      className='absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50'
+                      type="button"
+                      className="absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={togglePair}
                       disabled={!hasPair}
                     >
@@ -351,20 +348,20 @@ export function PhotoGallery({
                     </button>
                   )}
                   <button
-                    type='button'
-                    className='absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85'
+                    type="button"
+                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
                     onClick={showPrev}
                   >
                     ←
                   </button>
                   <button
-                    type='button'
-                    className='absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85'
+                    type="button"
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
                     onClick={showNext}
                   >
                     →
                   </button>
-                  <div className='flex items-center justify-between px-4 py-3 text-sm text-white/80'>
+                  <div className="flex items-center justify-between px-4 py-3 text-sm text-white/80">
                     <span>{currentPhoto.alt}</span>
                   </div>
                 </div>

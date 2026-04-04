@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { Role } from '../../generated/prisma';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
+import { Role } from '../../generated/prisma';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
 
@@ -108,9 +108,7 @@ describe('AuthService', () => {
       await expect(service.signup(signupDto)).rejects.toThrow(
         ConflictException, // 409 error
       );
-      await expect(service.signup(signupDto)).rejects.toThrow(
-        'User already exists',
-      );
+      await expect(service.signup(signupDto)).rejects.toThrow('User already exists');
       // should not be called
       expect(prismaService.user.create).not.toHaveBeenCalled();
     });
@@ -141,10 +139,7 @@ describe('AuthService', () => {
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         where: { email: loginDto.email },
       });
-      expect(bcrypt.compare).toHaveBeenCalledWith(
-        loginDto.password,
-        mockUser.password,
-      );
+      expect(bcrypt.compare).toHaveBeenCalledWith(loginDto.password, mockUser.password);
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
@@ -166,9 +161,7 @@ describe('AuthService', () => {
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException, // 401 error
       );
-      await expect(service.login(loginDto)).rejects.toThrow(
-        'Invalid credentials',
-      );
+      await expect(service.login(loginDto)).rejects.toThrow('Invalid credentials');
     });
 
     it('should throw UnauthorizedException if password is invalid', async () => {
@@ -178,9 +171,7 @@ describe('AuthService', () => {
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException, //
       );
-      await expect(service.login(loginDto)).rejects.toThrow(
-        'Invalid credentials',
-      );
+      await expect(service.login(loginDto)).rejects.toThrow('Invalid credentials');
     });
   });
 });
