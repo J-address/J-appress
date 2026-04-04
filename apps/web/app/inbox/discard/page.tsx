@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 import DecorativeBirds from '@/srcs/components/decorative_birds';
 import { getSelectedItemCount, lettersGallery, packagesGallery } from '@/srcs/data/inbox_photos';
@@ -11,7 +12,7 @@ const gradientStyle = {
     'linear-gradient(180deg, #d8daddff 3%, #c0dfffff 16%, #6aa2f0ff 36%, #0155c3ff 90%)',
 };
 
-export default function DiscardPage() {
+function DiscardPageContent() {
   const searchParams = useSearchParams();
   const rawIds = searchParams.get('ids') ?? '';
   const selectedIds = rawIds
@@ -130,5 +131,13 @@ export default function DiscardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DiscardPage() {
+  return (
+    <Suspense>
+      <DiscardPageContent />
+    </Suspense>
   );
 }
