@@ -30,22 +30,21 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm --filter api prisma:generate
+        run: pnpm --filter @j-address/api prisma:generate
 
       - name: Run Linting and TypeScript Check
         run: |
-          pnpm --filter api lint
-          pnpm --filter web lint
+          pnpm lint
           pnpm typecheck
 
       - name: Security Audit
         run: pnpm audit --audit-level=high
 
       - name: Run Unit Tests
-        run: pnpm --filter api test
+        run: pnpm --filter @j-address/api test
 
       - name: Build API
-        run: pnpm --filter api build
+        run: pnpm --filter @j-address/api build
 
       - name: Build Web
-        run: pnpm --filter web build
+        run: pnpm --filter @j-address/web build

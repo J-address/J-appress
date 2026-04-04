@@ -3,26 +3,22 @@
   "version": "1.0.0",
   "description": "J-address monorepo - Japanese mail forwarding service",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "npm run dev:docker && concurrently \"npm run dev:web\" \"npm run dev:api\"",
-    "dev:docker": "node -e \"const { spawnSync } = require('child_process'); const result = spawnSync('docker', ['info'], { stdio: 'ignore' }); if (result.status !== 0) { console.error('[dev] Docker daemon is not running or not reachable. Please start Docker and ensure docker-compose.yml exists before running \\'npm run dev\\'.'); process.exit(1); }\" && docker compose up -d",
-    "dev:web": "npm run dev --workspace=apps/web",
-    "dev:api": "npm run dev --workspace=apps/api",
-    "build": "npm run build --workspaces",
-    "build:web": "npm run build --workspace=apps/web",
-    "build:api": "npm run build --workspace=apps/api",
+    "dev": "pnpm run dev:docker && concurrently \"pnpm run dev:web\" \"pnpm run dev:api\"",
+    "dev:docker": "node -e \"const { spawnSync } = require('child_process'); const result = spawnSync('docker', ['info'], { stdio: 'ignore' }); if (result.status !== 0) { console.error('[dev] Docker daemon is not running or not reachable. Please start Docker and ensure docker-compose.yml exists before running \\'pnpm run dev\\'.'); process.exit(1); }\" && docker compose up -d",
+    "dev:web": "pnpm --filter @j-address/web dev",
+    "dev:api": "pnpm --filter @j-address/api dev",
+    "build": "pnpm -r build",
+    "build:web": "pnpm --filter @j-address/web build",
+    "build:api": "pnpm --filter @j-address/api build",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
     "clean": "rm -rf apps/*/node_modules packages/*/node_modules node_modules",
-    "prisma:generate": "npm run prisma:generate --workspace=apps/api",
-    "prisma:migrate": "npm run prisma:migrate --workspace=apps/api"
+    "prisma:generate": "pnpm --filter @j-address/api prisma:generate",
+    "prisma:migrate": "pnpm --filter @j-address/api prisma:migrate"
   },
   "keywords": [
     "mail-forwarding",
@@ -37,7 +33,7 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=24.0.0",
+    "pnpm": ">=9.0.0"
   }
 }
