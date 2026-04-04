@@ -39,7 +39,7 @@
         "noImgElement": "off"
       },
       "suspicious": {
-        "noArrayIndexKey": "warn",
+        "noArrayIndexKey": "off",
         "noUnknownAtRules": "off"
       }
     }
