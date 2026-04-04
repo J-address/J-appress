@@ -1,4 +1,4 @@
-import { registerSchema, loginSchema } from './auth.schema';
+import { loginSchema, registerSchema } from './auth.schema';
 
 describe('registerSchema', () => {
   it('accepts valid email and password', () => {
