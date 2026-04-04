@@ -15,19 +15,37 @@ jobs:
       - name: Checkout Repository Code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: "24"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: npm run prisma:generate
+        run: pnpm --filter api prisma:generate
 
       - name: Run Linting and TypeScript Check
         run: |
-          npm run lint
-          npm run typecheck
+          pnpm --filter api lint
+          pnpm --filter web lint
+          pnpm typecheck
+
+      - name: Security Audit
+        run: pnpm audit --audit-level=high
+
+      - name: Run Unit Tests
+        run: pnpm --filter api test
+
+      - name: Build API
+        run: pnpm --filter api build
+
+      - name: Build Web
+        run: pnpm --filter web build
