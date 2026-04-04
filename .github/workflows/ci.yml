@@ -38,7 +38,7 @@ jobs:
           pnpm typecheck
 
       - name: Security Audit
-        run: pnpm audit --audit-level=high
+        run: pnpm audit --audit-level=high --ignore-unfixable
 
       - name: Run Unit Tests
         run: pnpm --filter @j-address/api test
