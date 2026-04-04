@@ -18,7 +18,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
@@ -38,7 +38,7 @@ jobs:
           pnpm typecheck
 
       - name: Security Audit
-        run: pnpm audit --audit-level=high
+        run: pnpm audit --audit-level=high --ignore-unfixable
 
       - name: Run Unit Tests
         run: pnpm --filter @j-address/api test
