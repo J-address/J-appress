@@ -1,7 +1,7 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ZodValidationPipe } from 'nestjs-zod';
 import 'dotenv/config';
 
 async function bootstrap() {
@@ -15,12 +15,7 @@ async function bootstrap() {
   });
 
   //  Apply global validation to all routes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // Remove extra properties
-      transform: true, // Auto-convert types
-    }),
-  );
+  app.useGlobalPipes(new ZodValidationPipe());
 
   // Set up Swagger UI
   const config = new DocumentBuilder()
