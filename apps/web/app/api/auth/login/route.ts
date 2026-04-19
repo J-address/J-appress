@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Role } from '@j-address/shared';
+import { Role, authResponseSchema } from '@j-address/shared';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -30,17 +30,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data, { status: apiRes.status });
   }
 
-  const payload = data as Record<string, unknown>;
-  if (typeof payload.access_token !== 'string' || !payload.user) {
+  const result = authResponseSchema.safeParse(data);
+  if (!result.success) {
     return NextResponse.json({ message: '予期しないレスポンス' }, { status: 502 });
   }
 
+  const { access_token, user } = result.data;
+
   // Read variant from request body
   const variant = (body as Record<string, unknown>).variant as 'user' | 'admin' | undefined;
-
-  // Validate role matches expected variant before setting cookie
-  const userPayload = payload as { access_token: string; user: { id: string; email: string; role: Role } };
-  const { access_token, user } = userPayload;
 
   if (variant === 'user' && user.role === Role.ADMIN) {
     return NextResponse.json(

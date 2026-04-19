@@ -1,4 +1,4 @@
-import { Role } from '@j-address/shared';
+import { authResponseSchema } from '@j-address/shared';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -30,12 +30,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data, { status: apiRes.status });
   }
 
-  const payload = data as Record<string, unknown>;
-  if (typeof payload.access_token !== 'string' || !payload.user) {
+  const result = authResponseSchema.safeParse(data);
+  if (!result.success) {
     return NextResponse.json({ message: '予期しないレスポンス' }, { status: 502 });
   }
 
-  const { access_token, user } = payload as { access_token: string; user: { id: string; email: string; role: Role } };
+  const { access_token, user } = result.data;
 
   const response = NextResponse.json({ user });
 
