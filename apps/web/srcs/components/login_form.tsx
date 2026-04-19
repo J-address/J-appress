@@ -1,6 +1,5 @@
 'use client';
 
-import { Role } from '@j-address/shared';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import type { Theme } from '../themes';
@@ -26,24 +25,19 @@ export default function LoginForm({ theme, variant }: Props) {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, variant }),
       });
 
-      const data = await res.json() as { user?: { role: string }; message?: string };
+      const data = await res.json() as { message?: string };
 
       if (!res.ok) {
         throw new Error(data.message ?? 'ログインに失敗しました');
       }
 
+      // No more role checks needed — Route Handler already validated
       if (variant === 'user') {
-        if (data.user?.role === Role.ADMIN) {
-          throw new Error('管理者は /admin/login からログインしてください');
-        }
         router.replace('/inbox');
       } else {
-        if (data.user?.role === Role.USER) {
-          throw new Error('このページは管理者専用です');
-        }
         router.replace('/admin');
       }
     } catch (err) {

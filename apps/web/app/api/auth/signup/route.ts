@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { Role } from '@j-address/shared';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
   let apiRes: Response;
   try {
-    apiRes = await fetch(`${apiUrl}/auth/login`, {
+    apiRes = await fetch(`${apiUrl}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -35,25 +35,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: '予期しないレスポンス' }, { status: 502 });
   }
 
-  // Read variant from request body
-  const variant = (body as Record<string, unknown>).variant as 'user' | 'admin' | undefined;
-
-  // Validate role matches expected variant before setting cookie
-  const userPayload = payload as { access_token: string; user: { id: string; email: string; role: Role } };
-  const { access_token, user } = userPayload;
-
-  if (variant === 'user' && user.role === Role.ADMIN) {
-    return NextResponse.json(
-      { message: '管理者は /admin/login からログインしてください' },
-      { status: 403 },
-    );
-  }
-  if (variant === 'admin' && user.role === Role.USER) {
-    return NextResponse.json(
-      { message: 'このページは管理者専用です' },
-      { status: 403 },
-    );
-  }
+  const { access_token, user } = payload as { access_token: string; user: { id: string; email: string; role: Role } };
 
   const response = NextResponse.json({ user });
 
@@ -61,7 +43,7 @@ export async function POST(req: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60, // 1 hour — matches NestJS JWT expiry
+    maxAge: 60 * 60,
     path: '/',
   });
 
