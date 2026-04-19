@@ -94,13 +94,13 @@ export function ActionButton({
         className={`absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1 font-semibold text-black ${labelSizeClassName}`}
       >
         <span
-          className={`absolute -left-1 top-0 h-full w-[2px] origin-top bg-black transition-transform duration-150 ${
-            isActive ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'
+          className={`absolute bottom-0 left-0 h-[2px] w-full origin-left bg-black transition-transform duration-150 ${
+            isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
           }`}
           aria-hidden="true"
         />
         <span
-          className={`relative font-yomogi ${
+          className={`relative whitespace-nowrap font-yomogi ${
             isActive ? 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]' : ''
           } group-hover:drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]`}
         >

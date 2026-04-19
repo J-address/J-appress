@@ -67,7 +67,7 @@ export default function InboxPage() {
       actionKey: 'scan',
       label: 'スキャン',
       ariaLabel: 'スキャンを選択',
-      labelSizeClassName: 'text-xs',
+      labelSizeClassName: 'text-sm',
     },
     {
       actionKey: 'discard',
