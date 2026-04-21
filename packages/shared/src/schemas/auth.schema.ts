@@ -8,10 +8,10 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.email(),
   password: z.string().min(1),
+  loginType: z.enum(['user', 'admin']).optional(),
 });
 
 export const authResponseSchema = z.object({
-  access_token: z.string(),
   user: z.object({
     id: z.string(),
     email: z.string(),
