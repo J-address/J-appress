@@ -21,11 +21,14 @@ export default function LoginForm({ theme, variant }: Props) {
     setError('');
     setIsLoading(true);
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, variant }),
+        credentials: 'include',
+        body: JSON.stringify({ email, password, loginType: variant }),
       });
 
       const data = await res.json() as { message?: string };
@@ -34,7 +37,6 @@ export default function LoginForm({ theme, variant }: Props) {
         throw new Error(data.message ?? 'ログインに失敗しました');
       }
 
-      // No more role checks needed — Route Handler already validated
       if (variant === 'user') {
         router.replace('/inbox');
       } else {
