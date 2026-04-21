@@ -34,11 +34,14 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/signup', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+      const response = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -48,7 +51,6 @@ export default function SignupPage() {
         throw new Error(data.message ?? '登録に失敗しました');
       }
 
-      // Cookie is set by the BFF route handler — redirect to inbox
       window.location.href = '/inbox';
     } catch (err) {
       setError(err instanceof Error ? err.message : '予期しないエラーが発生しました');
