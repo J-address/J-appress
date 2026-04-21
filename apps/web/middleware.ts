@@ -60,6 +60,7 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+// If the path matches one of these, the middleware checks the token
 export const config = {
   matcher: ['/inbox', '/inbox/:path*', '/admin', '/admin/:path*', '/login'],
 };
