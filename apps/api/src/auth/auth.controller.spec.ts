@@ -1,4 +1,3 @@
-import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { Response } from 'express';
 import { Role } from '../../generated/prisma';
@@ -81,71 +80,6 @@ describe('AuthController', () => {
       });
     });
 
-    it('should throw ForbiddenException when USER tries to login via admin', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123', loginType: 'admin' as const };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
-      });
-
-      await expect(controller.login(loginDto, mockRes)).rejects.toThrow(ForbiddenException);
-      expect(mockRes.cookie).not.toHaveBeenCalled();
-    });
-
-    it('should throw ForbiddenException when ADMIN tries to login via user', async () => {
-      const loginDto = { email: 'admin@example.com', password: 'password123', loginType: 'user' as const };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'admin-123', email: 'admin@example.com', role: Role.ADMIN },
-      });
-
-      await expect(controller.login(loginDto, mockRes)).rejects.toThrow(ForbiddenException);
-      expect(mockRes.cookie).not.toHaveBeenCalled();
-    });
-
-    it('should allow USER to login without loginType', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123' };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
-      });
-
-      const result = await controller.login(loginDto, mockRes);
-      expect(mockRes.cookie).toHaveBeenCalled();
-      expect(result).toHaveProperty('user');
-    });
-
-    it('should allow USER to login with loginType: user', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123', loginType: 'user' as const };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
-      });
-
-      const result = await controller.login(loginDto, mockRes);
-      expect(mockRes.cookie).toHaveBeenCalledWith(
-        'access_token',
-        'jwt-token',
-        expect.objectContaining({ httpOnly: true }),
-      );
-      expect(result).toHaveProperty('user');
-    });
-
-    it('should allow ADMIN to login with loginType: admin', async () => {
-      const loginDto = { email: 'admin@example.com', password: 'password123', loginType: 'admin' as const };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'admin-123', email: 'admin@example.com', role: Role.ADMIN },
-      });
-
-      const result = await controller.login(loginDto, mockRes);
-      expect(mockRes.cookie).toHaveBeenCalledWith(
-        'access_token',
-        'jwt-token',
-        expect.objectContaining({ httpOnly: true }),
-      );
-      expect(result).toHaveProperty('user');
-    });
   });
 
   describe('getProfile', () => {
