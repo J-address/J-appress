@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -35,9 +35,18 @@ export class AuthController {
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiResponse({ status: 200, type: AuthResponse })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiResponse({ status: 403, description: 'Wrong login portal' })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { access_token, user } = await this.authService.login(dto);
+
+    if (dto.loginType === 'admin' && user.role !== 'ADMIN') {
+      throw new ForbiddenException('このページは管理者専用です');
+    }
+    if (dto.loginType === 'user' && user.role !== 'USER') {
+      throw new ForbiddenException('管理者は /admin/login からログインしてください');
+    }
+
     res.cookie('access_token', access_token, COOKIE_OPTIONS);
     return { user };
   }

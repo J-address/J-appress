@@ -28,7 +28,7 @@ export default function LoginForm({ theme, variant }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, loginType: variant }),
       });
 
       const data = await res.json() as { message?: string };
