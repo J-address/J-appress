@@ -19,3 +19,8 @@ export class AuthResponse {
   @ApiProperty({ type: UserResponse })
   user!: UserResponse;
 }
+
+export class LoginSignupResponse {
+  @ApiProperty({ type: UserResponse })
+  user!: UserResponse;
+}

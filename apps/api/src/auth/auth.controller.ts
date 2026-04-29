@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthResponse, UserResponse } from './dto/auth-response.dto';
+import { LoginSignupResponse, UserResponse } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -23,7 +23,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiResponse({ status: 201, type: AuthResponse })
+  @ApiResponse({ status: 201, type: LoginSignupResponse })
   @ApiResponse({ status: 409, description: 'User already exists' })
   @Post('signup')
   async signup(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
@@ -33,7 +33,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Login with email and password' })
-  @ApiResponse({ status: 200, type: AuthResponse })
+  @ApiResponse({ status: 200, type: LoginSignupResponse })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @ApiResponse({ status: 403, description: 'Wrong login portal' })
   @Post('login')
