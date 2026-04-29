@@ -82,7 +82,11 @@ describe('AuthController', () => {
     });
 
     it('should throw ForbiddenException when USER tries to login via admin', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123', loginType: 'admin' as const };
+      const loginDto = {
+        email: 'user@example.com',
+        password: 'password123',
+        loginType: 'admin' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
@@ -93,7 +97,11 @@ describe('AuthController', () => {
     });
 
     it('should throw ForbiddenException when ADMIN tries to login via user', async () => {
-      const loginDto = { email: 'admin@example.com', password: 'password123', loginType: 'user' as const };
+      const loginDto = {
+        email: 'admin@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'admin-123', email: 'admin@example.com', role: Role.ADMIN },
@@ -116,7 +124,11 @@ describe('AuthController', () => {
     });
 
     it('should allow USER to login with loginType: user', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123', loginType: 'user' as const };
+      const loginDto = {
+        email: 'user@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
@@ -132,7 +144,11 @@ describe('AuthController', () => {
     });
 
     it('should allow ADMIN to login with loginType: admin', async () => {
-      const loginDto = { email: 'admin@example.com', password: 'password123', loginType: 'admin' as const };
+      const loginDto = {
+        email: 'admin@example.com',
+        password: 'password123',
+        loginType: 'admin' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'admin-123', email: 'admin@example.com', role: Role.ADMIN },

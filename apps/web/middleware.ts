@@ -1,9 +1,7 @@
 import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'your_jwt_secret_key',
-);
+const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? 'your_jwt_secret_key');
 
 type JwtPayload = {
   sub: string;
