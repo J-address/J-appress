@@ -139,13 +139,6 @@ export function PhotoGallery({
     setSelectedValue(() => new Set());
   };
 
-  const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (selectionModeValue && !target.closest('[data-photo-tile="true"]')) {
-      clearSelection();
-    }
-  };
-
   const selectedCount = selectedValue.size;
   const currentPhoto = previewIndex !== null ? photos[previewIndex] : null;
   const currentDisplayNumber =
@@ -220,161 +213,166 @@ export function PhotoGallery({
   const closePreview = () => setPreviewIndex(null);
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: click-outside-to-deselect container
-    // biome-ignore lint/a11y/useKeyWithClickEvents: click-outside-to-deselect container
-    <div
-      className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur"
-      onClick={handleBackgroundClick}
-    >
-      {showHeader && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold text-white">{title}</h1>
-            {subtitle && <p className="text-sm text-white/70">{subtitle}</p>}
-          </div>
-          <div className="flex items-center gap-2">
-            {selectionModeValue && showSelectedBadge && (
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85">
-                選択済み: {selectedCount}
-              </span>
-            )}
-            {selectionModeValue && (
-              <button
-                type="button"
-                className="rounded-full border border-white/40 bg-white/10 px-3 py-1 text-xs font-semibold text-white transition hover:border-white/60 hover:bg-white/20"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  selectAll();
-                }}
-              >
-                全て選択
-              </button>
-            )}
-          </div>
-        </div>
+    <div className="relative rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
+      {selectionModeValue && (
+        <button
+          type="button"
+          aria-label="選択を解除"
+          className="absolute inset-0 z-0 rounded-3xl"
+          onClick={clearSelection}
+        />
       )}
-
-      <div className={gridClassName ?? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'}>
-        {photos.map((photo, index) => {
-          if (stackPairs && index % 2 === 1) return null;
-
-          const pairedPhoto = stackPairs ? photos[index + 1] : null;
-          const displayNumber = stackPairs ? Math.floor(index / 2) + 1 : index + 1;
-          const isSelected = selectedValue.has(photo.id);
-          return (
-            <button
-              key={photo.id}
-              type="button"
-              className={`group relative aspect-[4/3] ${
-                stackPairs ? 'overflow-visible' : 'overflow-visible rounded-2xl'
-              }`}
-              onPointerDown={() => startLongPress(photo)}
-              onPointerUp={() => {
-                if (longPressTimer.current) cancelLongPress();
-                if (longPressTriggered.current) {
-                  longPressTriggered.current = false;
-                  return;
-                }
-                handleTileClick(photo, index);
-              }}
-              onPointerLeave={cancelLongPress}
-              onPointerCancel={cancelLongPress}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleTileClick(photo, index);
-                }
-              }}
-              data-photo-tile="true"
-            >
-              {stackPairs && pairedPhoto && (
-                <div className="pointer-events-none absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-white/10 bg-white/5 shadow-lg">
-                  <img
-                    src={pairedPhoto.src}
-                    alt={pairedPhoto.alt}
-                    className="h-full w-full object-cover opacity-90"
-                  />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-                </div>
+      <div className="relative z-10 space-y-4">
+        {showHeader && (
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-semibold text-white">{title}</h1>
+              {subtitle && <p className="text-sm text-white/70">{subtitle}</p>}
+            </div>
+            <div className="flex items-center gap-2">
+              {selectionModeValue && showSelectedBadge && (
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85">
+                  選択済み: {selectedCount}
+                </span>
               )}
-              <div
-                className={`relative z-10 h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg transition hover:-translate-y-[2px] hover:border-white/30 ${
-                  isSelected ? highlightClass : ''
-                }`}
-              >
-                <PhotoIndexBadge value={displayNumber} />
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {currentPhoto &&
-        (typeof document !== 'undefined'
-          ? createPortal(
-              <>
+              {selectionModeValue && (
                 <button
                   type="button"
-                  aria-label="プレビューを閉じる"
-                  className="fixed inset-0 z-[9999] bg-black/80"
-                  onClick={closePreview}
-                />
-                <div className="pointer-events-none fixed inset-0 z-[10000] flex items-center justify-center px-4">
-                  <div className="pointer-events-auto relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl">
+                  className="rounded-full border border-white/40 bg-white/10 px-3 py-1 text-xs font-semibold text-white transition hover:border-white/60 hover:bg-white/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectAll();
+                  }}
+                >
+                  全て選択
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className={gridClassName ?? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'}>
+          {photos.map((photo, index) => {
+            if (stackPairs && index % 2 === 1) return null;
+
+            const pairedPhoto = stackPairs ? photos[index + 1] : null;
+            const displayNumber = stackPairs ? Math.floor(index / 2) + 1 : index + 1;
+            const isSelected = selectedValue.has(photo.id);
+            return (
+              <button
+                key={photo.id}
+                type="button"
+                className={`group relative aspect-[4/3] ${
+                  stackPairs ? 'overflow-visible' : 'overflow-visible rounded-2xl'
+                }`}
+                onPointerDown={() => startLongPress(photo)}
+                onPointerUp={() => {
+                  if (longPressTimer.current) cancelLongPress();
+                  if (longPressTriggered.current) {
+                    longPressTriggered.current = false;
+                    return;
+                  }
+                  handleTileClick(photo, index);
+                }}
+                onPointerLeave={cancelLongPress}
+                onPointerCancel={cancelLongPress}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleTileClick(photo, index);
+                  }
+                }}
+                data-photo-tile="true"
+              >
+                {stackPairs && pairedPhoto && (
+                  <div className="pointer-events-none absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-white/10 bg-white/5 shadow-lg">
                     <img
-                      src={currentPhoto.src}
-                      alt={currentPhoto.alt}
-                      className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
+                      src={pairedPhoto.src}
+                      alt={pairedPhoto.alt}
+                      className="h-full w-full object-cover opacity-90"
                     />
-                    {currentDisplayNumber !== null && (
-                      <PhotoIndexBadge value={currentDisplayNumber} className="left-4 top-4" />
-                    )}
-                    <button
-                      type="button"
-                      className="absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
-                      onClick={closePreview}
-                    >
-                      X
-                    </button>
-                    {stackPairs && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+                  </div>
+                )}
+                <div
+                  className={`relative z-10 h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg transition hover:-translate-y-[2px] hover:border-white/30 ${
+                    isSelected ? highlightClass : ''
+                  }`}
+                >
+                  <PhotoIndexBadge value={displayNumber} />
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {currentPhoto &&
+          (typeof document !== 'undefined'
+            ? createPortal(
+                <>
+                  <button
+                    type="button"
+                    aria-label="プレビューを閉じる"
+                    className="fixed inset-0 z-[9999] bg-black/80"
+                    onClick={closePreview}
+                  />
+                  <div className="pointer-events-none fixed inset-0 z-[10000] flex items-center justify-center px-4">
+                    <div className="pointer-events-auto relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl">
+                      <img
+                        src={currentPhoto.src}
+                        alt={currentPhoto.alt}
+                        className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
+                      />
+                      {currentDisplayNumber !== null && (
+                        <PhotoIndexBadge value={currentDisplayNumber} className="left-4 top-4" />
+                      )}
                       <button
                         type="button"
-                        className="absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
-                        onClick={togglePair}
-                        disabled={!hasPair}
+                        className="absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
+                        onClick={closePreview}
                       >
-                        ペア切替
+                        X
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
-                      onClick={showPrev}
-                    >
-                      ←
-                    </button>
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
-                      onClick={showNext}
-                    >
-                      →
-                    </button>
-                    <div className="flex items-center justify-between px-4 py-3 text-sm text-white/80">
-                      <span>{currentPhoto.alt}</span>
+                      {stackPairs && (
+                        <button
+                          type="button"
+                          className="absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+                          onClick={togglePair}
+                          disabled={!hasPair}
+                        >
+                          ペア切替
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
+                        onClick={showPrev}
+                      >
+                        ←
+                      </button>
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
+                        onClick={showNext}
+                      >
+                        →
+                      </button>
+                      <div className="flex items-center justify-between px-4 py-3 text-sm text-white/80">
+                        <span>{currentPhoto.alt}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </>,
-              document.body,
-            )
-          : null)}
+                </>,
+                document.body,
+              )
+            : null)}
+      </div>
     </div>
   );
 }
