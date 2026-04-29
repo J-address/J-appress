@@ -1,4 +1,4 @@
-import SignupPage from '@/srcs/pages/signup_page';
+import SignupPage from '@/src/components/signup_page';
 
 export default function Signup() {
   return <SignupPage />;

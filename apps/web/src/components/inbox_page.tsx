@@ -2,13 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { ActionKey } from '@/srcs/components/inbox_page_components';
-import { ActionButton, GallerySection } from '@/srcs/components/inbox_page_components';
+import type { ActionKey } from '@/src/components/inbox_page_components';
+import { ActionButton, GallerySection } from '@/src/components/inbox_page_components';
 import {
   getSelectedItemCount,
   lettersGallery as lettersGalleryData,
   packagesGallery as packagesGalleryData,
-} from '@/srcs/data/inbox_photos';
+} from '@/src/data/inbox_photos';
 
 const gradientStyle = {
   backgroundImage:

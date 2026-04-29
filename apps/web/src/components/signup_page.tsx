@@ -1,7 +1,7 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
-import DecorativeBirds from '../components/decorative_birds';
+import DecorativeBirds from './decorative_birds';
 
 const gradientStyle = {
   backgroundImage:

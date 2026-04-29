@@ -1,4 +1,4 @@
-import type { GalleryPhoto } from '@/srcs/components/inbox_page_components';
+import type { GalleryPhoto } from '@/src/components/inbox_page_components';
 
 export const packagesGallery: GalleryPhoto[] = [
   {

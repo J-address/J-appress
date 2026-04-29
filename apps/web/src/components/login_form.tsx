@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
-import type { Theme } from '../themes';
+import type { Theme } from '@/src/themes';
 
 type Props = {
   theme: Theme;

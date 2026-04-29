@@ -1,4 +1,4 @@
-import InboxPage from '@/srcs/pages/inbox_page';
+import InboxPage from '@/src/components/inbox_page';
 
 export default function InboxRoute() {
   return <InboxPage />;

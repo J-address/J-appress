@@ -1,6 +1,6 @@
 'use client';
 
-import { PhotoGallery } from '@/srcs/components/photo_gallery';
+import { PhotoGallery } from '@/src/components/photo_gallery';
 
 export type ActionKey = 'forward' | 'scan' | 'discard';
 

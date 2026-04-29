@@ -1,7 +1,7 @@
 'use client';
 
-import { adminTheme } from '../themes';
-import LoginForm from '../components/login_form';
+import { adminTheme } from '@/src/themes';
+import LoginForm from './login_form';
 
 export default function AdminLoginPage() {
   return (
