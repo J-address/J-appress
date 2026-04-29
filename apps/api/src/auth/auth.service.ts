@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../../generated/prisma';
@@ -55,6 +55,13 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (dto.loginType === 'admin' && user.role !== 'ADMIN') {
+      throw new ForbiddenException('このページは管理者専用です');
+    }
+    if (dto.loginType === 'user' && user.role !== 'USER') {
+      throw new ForbiddenException('管理者は /admin/login からログインしてください');
     }
 
     // Generate JWT
