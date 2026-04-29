@@ -16,9 +16,7 @@ export default function AdminLoginPage() {
           <h2 className={`mt-6 text-center text-3xl font-extrabold ${adminTheme.text}`}>
             管理者ログイン
           </h2>
-          <p className={`mt-2 text-center text-sm ${adminTheme.subtext}`}>
-            J-address 管理ポータル
-          </p>
+          <p className={`mt-2 text-center text-sm ${adminTheme.subtext}`}>J-address 管理ポータル</p>
         </div>
         <LoginForm theme={adminTheme} variant="admin" />
       </div>

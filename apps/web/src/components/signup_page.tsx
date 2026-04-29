@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import DecorativeBirds from './decorative_birds';
 
 const gradientStyle = {
@@ -9,6 +9,9 @@ const gradientStyle = {
 };
 
 export default function SignupPage() {
+  const emailId = useId();
+  const passwordId = useId();
+  const confirmPasswordId = useId();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,7 +48,7 @@ export default function SignupPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json() as { message?: string };
+      const data = (await response.json()) as { message?: string };
 
       if (!response.ok) {
         throw new Error(data.message ?? '登録に失敗しました');
@@ -100,11 +103,11 @@ export default function SignupPage() {
           <div className="space-y-4">
             {/* Email input */}
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor={emailId} className="sr-only">
                 メールアドレス
               </label>
               <input
-                id="email"
+                id={emailId}
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -118,11 +121,11 @@ export default function SignupPage() {
 
             {/* Password input */}
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor={passwordId} className="sr-only">
                 パスワード
               </label>
               <input
-                id="password"
+                id={passwordId}
                 name="password"
                 type="password"
                 autoComplete="new-password"
@@ -136,11 +139,11 @@ export default function SignupPage() {
 
             {/* Confirm Password input */}
             <div>
-              <label htmlFor="confirmPassword" className="sr-only">
+              <label htmlFor={confirmPasswordId} className="sr-only">
                 パスワード確認
               </label>
               <input
-                id="confirmPassword"
+                id={confirmPasswordId}
                 name="confirmPassword"
                 type="password"
                 autoComplete="new-password"

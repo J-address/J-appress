@@ -166,9 +166,13 @@ export function PhotoGallery({
       const next = new Set(prev);
       const allSelected = photos.every((p) => next.has(p.id));
       if (allSelected) {
-        photos.forEach((p) => next.delete(p.id));
+        photos.forEach((p) => {
+          next.delete(p.id);
+        });
       } else {
-        photos.forEach((p) => next.add(p.id));
+        photos.forEach((p) => {
+          next.add(p.id);
+        });
       }
       return next;
     });
@@ -216,6 +220,8 @@ export function PhotoGallery({
   const closePreview = () => setPreviewIndex(null);
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-outside-to-deselect container
+    // biome-ignore lint/a11y/useKeyWithClickEvents: click-outside-to-deselect container
     <div
       className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur"
       onClick={handleBackgroundClick}
@@ -256,8 +262,9 @@ export function PhotoGallery({
           const displayNumber = stackPairs ? Math.floor(index / 2) + 1 : index + 1;
           const isSelected = selectedValue.has(photo.id);
           return (
-            <div
+            <button
               key={photo.id}
+              type="button"
               className={`group relative aspect-[4/3] ${
                 stackPairs ? 'overflow-visible' : 'overflow-visible rounded-2xl'
               }`}
@@ -272,8 +279,6 @@ export function PhotoGallery({
               }}
               onPointerLeave={cancelLongPress}
               onPointerCancel={cancelLongPress}
-              role="button"
-              tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -305,7 +310,7 @@ export function PhotoGallery({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -313,59 +318,60 @@ export function PhotoGallery({
       {currentPhoto &&
         (typeof document !== 'undefined'
           ? createPortal(
-              <div
-                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-4"
-                onClick={closePreview}
-                role="presentation"
-              >
-                <div
-                  className="relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src={currentPhoto.src}
-                    alt={currentPhoto.alt}
-                    className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
-                  />
-                  {currentDisplayNumber !== null && (
-                    <PhotoIndexBadge value={currentDisplayNumber} className="left-4 top-4" />
-                  )}
-                  <button
-                    type="button"
-                    className="absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
-                    onClick={closePreview}
-                  >
-                    X
-                  </button>
-                  {stackPairs && (
+              <>
+                <button
+                  type="button"
+                  aria-label="プレビューを閉じる"
+                  className="fixed inset-0 z-[9999] bg-black/80"
+                  onClick={closePreview}
+                />
+                <div className="pointer-events-none fixed inset-0 z-[10000] flex items-center justify-center px-4">
+                  <div className="pointer-events-auto relative max-w-[90vw] rounded-3xl border border-white/20 bg-black/70 p-4 shadow-2xl">
+                    <img
+                      src={currentPhoto.src}
+                      alt={currentPhoto.alt}
+                      className="h-auto max-h-[85vh] w-auto max-w-full object-contain"
+                    />
+                    {currentDisplayNumber !== null && (
+                      <PhotoIndexBadge value={currentDisplayNumber} className="left-4 top-4" />
+                    )}
                     <button
                       type="button"
-                      className="absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={togglePair}
-                      disabled={!hasPair}
+                      className="absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-700"
+                      onClick={closePreview}
                     >
-                      ペア切替
+                      X
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
-                    onClick={showPrev}
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
-                    onClick={showNext}
-                  >
-                    →
-                  </button>
-                  <div className="flex items-center justify-between px-4 py-3 text-sm text-white/80">
-                    <span>{currentPhoto.alt}</span>
+                    {stackPairs && (
+                      <button
+                        type="button"
+                        className="absolute right-24 top-3 z-10 rounded-full bg-white/20 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={togglePair}
+                        disabled={!hasPair}
+                      >
+                        ペア切替
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
+                      onClick={showPrev}
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black/85"
+                      onClick={showNext}
+                    >
+                      →
+                    </button>
+                    <div className="flex items-center justify-between px-4 py-3 text-sm text-white/80">
+                      <span>{currentPhoto.alt}</span>
+                    </div>
                   </div>
                 </div>
-              </div>,
+              </>,
               document.body,
             )
           : null)}

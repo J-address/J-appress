@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import type { Theme } from '@/src/themes';
 
 type Props = {
@@ -11,6 +11,8 @@ type Props = {
 
 export default function LoginForm({ theme, variant }: Props) {
   const router = useRouter();
+  const emailId = useId();
+  const passwordId = useId();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +33,7 @@ export default function LoginForm({ theme, variant }: Props) {
         body: JSON.stringify({ email, password, loginType: variant }),
       });
 
-      const data = await res.json() as { message?: string };
+      const data = (await res.json()) as { message?: string };
 
       if (!res.ok) {
         throw new Error(data.message ?? 'ログインに失敗しました');
@@ -59,11 +61,11 @@ export default function LoginForm({ theme, variant }: Props) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="email" className="sr-only">
+          <label htmlFor={emailId} className="sr-only">
             メールアドレス
           </label>
           <input
-            id="email"
+            id={emailId}
             name="email"
             type="email"
             autoComplete="email"
@@ -76,11 +78,11 @@ export default function LoginForm({ theme, variant }: Props) {
         </div>
 
         <div>
-          <label htmlFor="password" className="sr-only">
+          <label htmlFor={passwordId} className="sr-only">
             パスワード
           </label>
           <input
-            id="password"
+            id={passwordId}
             name="password"
             type="password"
             autoComplete="current-password"
