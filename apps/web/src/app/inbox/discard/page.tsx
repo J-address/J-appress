@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-import DecorativeBirds from '@/srcs/components/decorative_birds';
-import { getSelectedItemCount, lettersGallery, packagesGallery } from '@/srcs/data/inbox_photos';
+import DecorativeBirds from '@/src/components/decorative_birds';
+import { getSelectedItemCount, lettersGallery, packagesGallery } from '@/src/data/inbox_photos';
 
 const gradientStyle = {
   backgroundImage:

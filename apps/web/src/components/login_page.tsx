@@ -1,8 +1,8 @@
 'use client';
 
-import { userTheme } from '../themes';
-import LoginForm from '../components/login_form';
-import DecorativeBirds from '../components/decorative_birds';
+import { userTheme } from '@/src/themes';
+import DecorativeBirds from './decorative_birds';
+import LoginForm from './login_form';
 
 export default function LoginPage() {
   return (

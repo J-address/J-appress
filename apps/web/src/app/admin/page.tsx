@@ -1,4 +1,4 @@
-import AdminPage from '@/srcs/pages/admin_page';
+import AdminPage from '@/src/components/admin_page';
 
 export default function AdminRoute() {
   return <AdminPage />;
