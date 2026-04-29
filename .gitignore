@@ -164,3 +164,6 @@ Thumbs.db
 
 # Git worktrees
 .worktrees/
+
+# Superpowers planning artifacts
+docs/superpowers/

@@ -32,6 +32,9 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm --filter @j-address/api prisma:generate
 
+      - name: Build Shared Package
+        run: pnpm --filter @j-address/shared build
+
       - name: Run Linting and TypeScript Check
         run: |
           pnpm lint

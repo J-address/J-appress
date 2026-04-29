@@ -34,29 +34,24 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      // Get API URL from environment variable
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
-      // Make POST request to the signup endpoint
       const response = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      const data = await response.json() as { message?: string };
 
-      // Store the token if provided
-      if (data.access_token) {
-        localStorage.setItem('access_token', data.access_token);
-        // Redirect to inbox page
-        window.location.href = '/inbox';
-      } else {
-        // if no token, redirect to login page
-        window.location.href = '/login';
+      if (!response.ok) {
+        throw new Error(data.message ?? '登録に失敗しました');
       }
+
+      window.location.href = '/inbox';
     } catch (err) {
       setError(err instanceof Error ? err.message : '予期しないエラーが発生しました');
     } finally {
