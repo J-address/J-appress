@@ -1,4 +1,4 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
@@ -118,6 +118,7 @@ describe('AuthService', () => {
     const loginDto = {
       email: 'test@example.com',
       password: 'password123',
+      loginType: 'user' as const,
     };
 
     const mockUser = {
@@ -125,6 +126,15 @@ describe('AuthService', () => {
       email: 'test@example.com',
       password: 'hashedPassword',
       role: Role.USER,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const mockAdmin = {
+      id: 'admin-456',
+      email: 'admin@example.com',
+      password: 'hashedPassword',
+      role: Role.ADMIN,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -155,12 +165,27 @@ describe('AuthService', () => {
       });
     });
 
+    it('should login admin and return access token', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockAdmin);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockJwtService.sign.mockReturnValue('jwt-token');
+
+      const result = await service.login({ ...loginDto, email: mockAdmin.email, loginType: 'admin' });
+
+      expect(result).toEqual({
+        access_token: 'jwt-token',
+        user: {
+          id: mockAdmin.id,
+          email: mockAdmin.email,
+          role: mockAdmin.role,
+        },
+      });
+    });
+
     it('should throw UnauthorizedException if user not found', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.login(loginDto)).rejects.toThrow(
-        UnauthorizedException, // 401 error
-      );
+      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
       await expect(service.login(loginDto)).rejects.toThrow('Invalid credentials');
     });
 
@@ -168,10 +193,30 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login(loginDto)).rejects.toThrow(
-        UnauthorizedException, //
-      );
+      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
       await expect(service.login(loginDto)).rejects.toThrow('Invalid credentials');
+    });
+
+    it('should throw ForbiddenException when a USER attempts to log in via the admin portal', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      await expect(service.login({ ...loginDto, loginType: 'admin' })).rejects.toThrow(ForbiddenException);
+      await expect(service.login({ ...loginDto, loginType: 'admin' })).rejects.toThrow(
+        'このページは管理者専用です',
+      );
+    });
+
+    it('should throw ForbiddenException when an ADMIN attempts to log in via the user portal', async () => {
+      mockPrismaService.user.findUnique.mockResolvedValue(mockAdmin);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      await expect(service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' })).rejects.toThrow(
+        ForbiddenException,
+      );
+      await expect(service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' })).rejects.toThrow(
+        '管理者は /admin/login からログインしてください',
+      );
     });
   });
 });
