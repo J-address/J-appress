@@ -63,7 +63,11 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should set httpOnly cookie and return only user', async () => {
-      const loginDto = { email: 'test@example.com', password: 'password123', loginType: 'user' as const };
+      const loginDto = {
+        email: 'test@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'test@example.com', role: Role.USER },
@@ -108,7 +112,11 @@ describe('AuthController', () => {
     });
 
     it('should allow USER to login with loginType: user', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123', loginType: 'user' as const };
+      const loginDto = {
+        email: 'user@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'user@example.com', role: Role.USER },

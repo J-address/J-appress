@@ -170,7 +170,11 @@ describe('AuthService', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       mockJwtService.sign.mockReturnValue('jwt-token');
 
-      const result = await service.login({ ...loginDto, email: mockAdmin.email, loginType: 'admin' });
+      const result = await service.login({
+        ...loginDto,
+        email: mockAdmin.email,
+        loginType: 'admin',
+      });
 
       expect(result).toEqual({
         access_token: 'jwt-token',
@@ -201,7 +205,9 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      await expect(service.login({ ...loginDto, loginType: 'admin' })).rejects.toThrow(ForbiddenException);
+      await expect(service.login({ ...loginDto, loginType: 'admin' })).rejects.toThrow(
+        ForbiddenException,
+      );
       await expect(service.login({ ...loginDto, loginType: 'admin' })).rejects.toThrow(
         'このページは管理者専用です',
       );
@@ -211,12 +217,12 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockAdmin);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      await expect(service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' })).rejects.toThrow(
-        ForbiddenException,
-      );
-      await expect(service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' })).rejects.toThrow(
-        '管理者は /admin/login からログインしてください',
-      );
+      await expect(
+        service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' }),
+      ).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.login({ ...loginDto, email: mockAdmin.email, loginType: 'user' }),
+      ).rejects.toThrow('管理者は /admin/login からログインしてください');
     });
   });
 });
