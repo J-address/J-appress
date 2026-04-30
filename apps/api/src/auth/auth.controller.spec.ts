@@ -63,7 +63,11 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should set httpOnly cookie and return only user', async () => {
-      const loginDto = { email: 'test@example.com', password: 'password123' };
+      const loginDto = {
+        email: 'test@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'test@example.com', role: Role.USER },
@@ -81,38 +85,38 @@ describe('AuthController', () => {
       });
     });
 
-    it('should throw ForbiddenException when USER tries to login via admin', async () => {
+    it('should propagate ForbiddenException when service rejects USER attempting admin login', async () => {
       const loginDto = {
         email: 'user@example.com',
         password: 'password123',
         loginType: 'admin' as const,
       };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'user-123', email: 'user@example.com', role: Role.USER },
-      });
+      mockAuthService.login.mockRejectedValue(new ForbiddenException('このページは管理者専用です'));
 
       await expect(controller.login(loginDto, mockRes)).rejects.toThrow(ForbiddenException);
       expect(mockRes.cookie).not.toHaveBeenCalled();
     });
 
-    it('should throw ForbiddenException when ADMIN tries to login via user', async () => {
+    it('should propagate ForbiddenException when service rejects ADMIN attempting user login', async () => {
       const loginDto = {
         email: 'admin@example.com',
         password: 'password123',
         loginType: 'user' as const,
       };
-      mockAuthService.login.mockResolvedValue({
-        access_token: 'jwt-token',
-        user: { id: 'admin-123', email: 'admin@example.com', role: Role.ADMIN },
-      });
+      mockAuthService.login.mockRejectedValue(
+        new ForbiddenException('管理者は /admin/login からログインしてください'),
+      );
 
       await expect(controller.login(loginDto, mockRes)).rejects.toThrow(ForbiddenException);
       expect(mockRes.cookie).not.toHaveBeenCalled();
     });
 
-    it('should allow USER to login without loginType', async () => {
-      const loginDto = { email: 'user@example.com', password: 'password123' };
+    it('should allow USER to login with loginType: user', async () => {
+      const loginDto = {
+        email: 'user@example.com',
+        password: 'password123',
+        loginType: 'user' as const,
+      };
       mockAuthService.login.mockResolvedValue({
         access_token: 'jwt-token',
         user: { id: 'user-123', email: 'user@example.com', role: Role.USER },

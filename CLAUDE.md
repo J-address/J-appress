@@ -52,21 +52,19 @@ J-app/
 |---|---|---|---|
 | Now | Biome | **2.2.4** | Replace ESLint+Prettier — faster, zero-config |
 | Now | Zod | **4.0.1** | Replace class-validator — unified validation across frontend and backend |
-| Soon | Redux Toolkit + RTK Query | **2.11.0** | Frontend state + API cache management |
-| Soon | Redis (ioredis) | **5.4.0** | Session cache, real-time adapter, JWT blacklist |
-| Soon | Socket.io | **4.x** | Real-time inbox notifications when mail arrives |
 | Soon | AWS S3 + CloudFront | SDK v3 | Storage for scanned mail images (`imageUrl`) |
 | Soon | Stripe Node | **19.1.0** | Subscription billing — core to the business model |
-| Soon | SendGrid + MJML | — | Mail arrival notification emails to users |
+| Soon | Nodemailer + React Email | — | Transactional emails — Nodemailer abstracts the provider (Resend, SES, any SMTP), React Email for templates |
 | Soon | Sentry | latest | Production error monitoring — must have before launch |
-| Later | @anthropic-ai/sdk (Claude) | latest | Auto-classify mail content, OCR summary |
+| Soon | @nestjs/throttler | latest | Rate limiting — prevents brute force on login and password reset |
+| Soon | @nestjs/swagger | latest | Auto-generated interactive API docs from NestJS decorators |
+| Soon | Docker | latest | Containerize API for ECS Fargate deployment |
+| Later | Google Cloud Vision API | v1 | OCR for scanned mail — best-in-class vertical handwritten Japanese |
+| Later | @anthropic-ai/sdk (Claude) | latest | Auto-classify mail type after Vision API extracts text |
 | Later | Google OAuth | — | Reduce signup friction |
-| Later | Google Maps | — | Address input UX for forwarding destinations |
 | Later | Playwright | **1.58.2** | E2E tests for critical user flows |
 | Later | shadcn/ui | latest | User-facing + admin components — owns the code, built on Radix UI + Tailwind, RSC native |
-| Later | wanakana | — | Japanese kana input conversion for address forms |
 | Later | awesome-phonenumber | — | Japanese phone number validation |
-| Later | zengin-code | — | Bank transfer feature for billing |
 
 ---
 
@@ -83,12 +81,10 @@ Major version jumps to be aware of — these have breaking changes:
 | Biome | 1.x | **2.2.4** | Yes — config format changed |
 | Vite | 6 | **8.0.0** | Yes — config changes |
 | Playwright | 1.4x | **1.58.2** | Minor only |
-| Redux Toolkit | 2.x | **2.11.0** | No |
 | NestJS | 11 | **11.1.16** | No |
 | Next.js | 15 | **16.2.2** | Minor only |
 | React | 19.1 | **19.2.0** | No |
 | Stripe Node | — | **19.1.0** | — |
-| ioredis | — | **5.4.0** | — |
 
 ---
 
@@ -174,10 +170,10 @@ PORT=3001
 # AWS_S3_BUCKET=...
 # AWS_CLOUDFRONT_URL=...
 # STRIPE_SECRET_KEY=...
-# SENDGRID_API_KEY=...
+# RESEND_API_KEY=...                  # or swap for SES config — Nodemailer handles both
 # ANTHROPIC_API_KEY=...
+# GOOGLE_CLOUD_VISION_KEY=...
 # SENTRY_DSN=...
-# REDIS_URL=...
 # GOOGLE_CLIENT_ID=...
 # GOOGLE_CLIENT_SECRET=...
 ```
@@ -188,10 +184,11 @@ PORT=3001
 
 - **Monorepo** with `packages/shared` for types/DTOs used by both apps — keep API contracts in sync
 - **Prisma over raw SQL** — type safety on DB operations is non-negotiable
-- **JWT stateless auth** — no server-side sessions; add Redis (ioredis 5.4.0) when refresh token blacklisting is needed
+- **JWT stateless auth** — no server-side sessions; stateless JWT with short-lived access tokens is sufficient at this scale
 - **class-validator now, Zod 4 soon** — migrate to Zod 4 for unified validation on both frontend and backend via shared schemas
 - **Headless UI now, shadcn/ui later** — shadcn/ui replaces both Headless UI and MUI. Built on Radix UI + Tailwind, RSC-native, no version lock-in. MUI dropped — its CSS-in-JS model conflicts with RSC and creates React upgrade lag
 - **S3 for imageUrl** — never store binary in PostgreSQL; `imageUrl` field is reserved for S3 object key
+- **Nodemailer for email** — business logic never imports a provider SDK directly; transport config (Resend, SES, SMTP) lives in env vars only
 - **Biome over ESLint+Prettier** — Biome 2.x handles both formatting and linting in one tool with near-zero config
 
 ---
@@ -223,12 +220,12 @@ Skills in this stack that are highly valued in Canada:
 - JWT/Passport + Google OAuth (A demand)
 - AWS S3/CloudFront (A demand)
 - Stripe (A demand)
+- Docker + ECS Fargate (A demand)
 - shadcn/ui — fastest growing UI library, dominant in modern Canada startups (A demand, rising)
 - @anthropic-ai/sdk — AI integration is the fastest-growing skill in 2024-2025 (A demand)
+- Google Cloud Vision — OCR/AI integration signal (B demand, rising)
 - Playwright — overtaking Cypress in Canadian job listings (A demand)
-- Redux Toolkit + RTK Query — required for senior React roles (A demand)
 - Zod 4 — standard in modern TypeScript stacks (B demand, rising)
-- Redis — near-universal in backend roles (A demand)
 - Kubernetes — high salary impact but not needed for this project's current phase
 
 ## Technology Selection Rule

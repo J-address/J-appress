@@ -1,14 +1,16 @@
 import { z } from 'zod';
 
+export const MIN_PASSWORD_LENGTH = 8;
+
 export const registerSchema = z.object({
   email: z.email(),
-  password: z.string().min(8),
+  password: z.string().min(MIN_PASSWORD_LENGTH),
 });
 
 export const loginSchema = z.object({
   email: z.email(),
-  password: z.string().min(1),
-  loginType: z.enum(['user', 'admin']).optional(),
+  password: z.string().min(MIN_PASSWORD_LENGTH),
+  loginType: z.enum(['user', 'admin']),
 });
 
 export const authResponseSchema = z.object({
