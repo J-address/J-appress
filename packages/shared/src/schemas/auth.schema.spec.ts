@@ -27,18 +27,55 @@ describe('registerSchema', () => {
 });
 
 describe('loginSchema', () => {
-  it('accepts valid email and password', () => {
+  it('accepts valid email, password, and loginType', () => {
     const result = loginSchema.safeParse({
       email: 'user@example.com',
       password: 'password123',
+      loginType: 'user',
     });
     expect(result.success).toBe(true);
   });
 
-  it('rejects empty password', () => {
+  it('accepts loginType admin', () => {
+    const result = loginSchema.safeParse({
+      email: 'admin@example.com',
+      password: 'password123',
+      loginType: 'admin',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing loginType', () => {
     const result = loginSchema.safeParse({
       email: 'user@example.com',
-      password: '',
+      password: 'password123',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid loginType', () => {
+    const result = loginSchema.safeParse({
+      email: 'user@example.com',
+      password: 'password123',
+      loginType: 'superuser',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects password shorter than 8 characters', () => {
+    const result = loginSchema.safeParse({
+      email: 'user@example.com',
+      password: 'short',
+      loginType: 'user',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid email', () => {
+    const result = loginSchema.safeParse({
+      email: 'not-an-email',
+      password: 'password123',
+      loginType: 'user',
     });
     expect(result.success).toBe(false);
   });
