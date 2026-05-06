@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -45,7 +45,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, type: UserResponse })
-  @ApiBearerAuth()
+  @ApiCookieAuth('access_token')
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: AuthUser): AuthUser {
