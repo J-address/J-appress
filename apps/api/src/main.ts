@@ -25,7 +25,7 @@ async function bootstrap() {
     .setTitle('J-address API')
     .setDescription('Virtual Japanese mail address service API')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addCookieAuth('access_token')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

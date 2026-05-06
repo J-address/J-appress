@@ -1,4 +1,4 @@
-import { ExecutionContext, INestApplication } from '@nestjs/common';
+import { ExecutionContext, INestApplication, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import supertest from 'supertest';
@@ -16,7 +16,7 @@ const buildAppWithUser = async (user: AuthUser | null): Promise<INestApplication
     .overrideGuard(JwtAuthGuard)
     .useValue({
       canActivate: (ctx: ExecutionContext) => {
-        if (!user) return false;
+        if (!user) throw new UnauthorizedException();
         ctx.switchToHttp().getRequest().user = user;
         return true;
       },
@@ -33,7 +33,7 @@ describe('AdminController', () => {
     let app: INestApplication;
 
     afterEach(async () => {
-      await app.close();
+      await app?.close();
     });
 
     it('should return 200 with dashboard data when an ADMIN accesses the dashboard', async () => {
@@ -62,10 +62,10 @@ describe('AdminController', () => {
       await supertest(app.getHttpServer()).get('/admin/dashboard').expect(403);
     });
 
-    it('should return 403 Forbidden when no user is authenticated', async () => {
+    it('should return 401 Unauthorized when no user is authenticated', async () => {
       app = await buildAppWithUser(null);
 
-      await supertest(app.getHttpServer()).get('/admin/dashboard').expect(403);
+      await supertest(app.getHttpServer()).get('/admin/dashboard').expect(401);
     });
   });
 });
