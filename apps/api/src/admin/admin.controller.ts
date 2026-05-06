@@ -32,10 +32,6 @@ export class AdminController {
         email: user.email,
         role: user.role,
       },
-      stats: {
-        totalUsers: 0, // TODO: Implement actual stats
-        totalInboxItems: 0,
-      },
     };
   }
 }

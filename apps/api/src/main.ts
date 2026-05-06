@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AppModule } from './app.module';
 import 'dotenv/config';
@@ -7,6 +8,8 @@ import 'dotenv/config';
 async function bootstrap() {
   //  Create the NestJS application
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   // Enable CORS for frontend
   app.enableCors({
